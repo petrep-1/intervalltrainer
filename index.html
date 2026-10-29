@@ -80,13 +80,56 @@ td.r,th.r{text-align:right}
 .erow h3{margin:0;font:700 17px var(--display)}
 .erow p{margin:2px 0 0;font-size:13px;color:var(--muted)}
 .mini{display:flex;gap:6px}
-.mini button{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;width:42px;height:38px;cursor:pointer;font:700 16px var(--body)}
+.mini button{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;min-width:48px;padding:0 10px;height:40px;cursor:pointer;font:700 14px var(--body);white-space:nowrap}
 .mini button:hover{border-color:var(--accent)}
 .notes{font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:.02em}
 .notes .q{color:var(--brass)}
 footer{color:var(--muted);font-size:13px;text-align:center}
-button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
-@media (max-width:420px){.card{padding:16px}.answers{grid-template-columns:1fr 1fr}}
+button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+button,summary,label{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
+/* Einstellungen einklappbar */
+.setbox{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.setbox summary{list-style:none;cursor:pointer;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:48px}
+.setbox summary::-webkit-details-marker{display:none}
+.setbox summary b{font-family:var(--display);font-size:16px}
+.setbox summary span{color:var(--muted);font-size:13px;text-align:right}
+.setbox summary::after{content:"▾";color:var(--muted);transition:transform .15s}
+.setbox[open] summary::after{transform:rotate(180deg)}
+.setbox .settings{padding:4px 16px 16px}
+
+/* Schalter */
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;padding:10px 0;border-top:1px solid var(--line);font-weight:700}
+.switch input{appearance:none;-webkit-appearance:none;width:50px;height:30px;border-radius:15px;background:var(--line);position:relative;cursor:pointer;flex:none;margin:0;transition:background .15s}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--surface);box-shadow:0 1px 3px #0003;transition:transform .15s}
+.switch input:checked{background:var(--accent)}
+.switch input:checked::after{transform:translateX(20px)}
+
+/* Touch-Geräte: keine Tastaturhinweise */
+@media (hover:none){.ans kbd,footer{display:none}}
+
+/* Handy */
+@media (max-width:520px){
+  body{padding-block:12px 28px}
+  .wrap{gap:14px}
+  .sub{font-size:13px;margin-top:4px}
+  .tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;box-shadow:0 4px 12px -6px #0003}
+  .tab{padding:12px 6px;font-size:15px}
+  .card{padding:16px;gap:16px;border-radius:16px}
+  .playrow{flex-wrap:nowrap;gap:14px}
+  .play{width:64px;height:64px}
+  .play svg{width:26px;height:26px}
+  .mode-tag{font-size:20px}
+  .answers{grid-template-columns:1fr 1fr;gap:8px}
+  .ans{padding:14px 12px;font-size:15px;min-height:56px;align-items:center}
+  .btnrow .btn{flex:1 1 auto;min-height:48px}
+  .chip{padding:9px 13px;min-height:40px}
+  .stat b{font-size:24px}
+  .erow{grid-template-columns:1fr;gap:8px}
+  .mini button{flex:1;height:44px}
+  .notes{font-size:26px}
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -96,7 +139,7 @@ button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
   <header>
     <div>
       <h1>Intervall-<span>Trainer</span></h1>
-      <p class="sub">Hören, erkennen, nachsingen.</p>
+      <p class="sub">Hören, erkennen, nachsingen.<br>Vorbereitung für Prüfungssituationen jeglicher Art</p>
     </div>
   </header>
 
@@ -106,16 +149,19 @@ button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
     <button class="tab" role="tab" id="tab-sing" aria-selected="false" data-view="sing">Singen</button>
   </div>
 
-  <section class="settings" id="settings">
-    <div>
-      <p class="label">Intervalle</p>
-      <div class="chips" id="ivChips"></div>
-    </div>
-    <div>
-      <p class="label">Modus</p>
-      <div class="chips" id="modeChips"></div>
-    </div>
-  </section>
+  <details class="setbox" id="settings">
+    <summary><b>Einstellungen</b><span id="setSummary"></span></summary>
+    <section class="settings">
+      <div>
+        <p class="label">Intervalle</p>
+        <div class="chips" id="ivChips"></div>
+      </div>
+      <div>
+        <p class="label">Modus</p>
+        <div class="chips" id="modeChips"></div>
+      </div>
+    </section>
+  </details>
 
   <!-- QUIZ -->
   <section id="view-quiz" class="card">
@@ -162,6 +208,7 @@ button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
       </div>
     </div>
     <div class="notes" id="sgNotes">– → <span class="q">?</span></div>
+    <label class="switch" for="sgHintsToggle">Merkhilfe anzeigen <input type="checkbox" id="sgHintsToggle" checked></label>
     <div class="btnrow">
       <button class="btn" id="sgCheck">Zielton anhören</button>
       <button class="btn ghost" id="sgNew">Neue Aufgabe</button>
@@ -175,7 +222,7 @@ button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
 const IV = [
   {s:1, name:"kleine Sekunde", up:"Der weiße Hai", down:"Für Elise"},
   {s:2, name:"große Sekunde", up:"Alle meine Entchen", down:"Yesterday (Beatles)"},
-  {s:3, name:"kleine Terz", up:"Greensleeves", down:"Kuckucksruf"},
+  {s:3, name:"kleine Terz", up:"Axel F", down:"Kuckucksruf"},
   {s:4, name:"große Terz", up:"When the Saints", down:"Swing Low"},
   {s:5, name:"Quarte", up:"O Tannenbaum", down:"Eine kleine Nachtmusik"},
   {s:6, name:"Tritonus", up:"Die Simpsons", down:"Black Sabbath"},
@@ -193,6 +240,7 @@ const NOTE = ["C","Cis","D","Dis","E","F","Fis","G","Gis","A","B","H"];
 
 let state = {iv:[3,4,5,7], modes:["up","down","harm"]};
 try{ const s = JSON.parse(localStorage.getItem("ivt-settings")); if(s && s.iv?.length && s.modes?.length) state = s; }catch(e){}
+if(state.singHints === undefined) state.singHints = true;
 let stats = {};
 try{ stats = JSON.parse(localStorage.getItem("ivt-stats")) || {}; }catch(e){}
 const save = () => { try{ localStorage.setItem("ivt-settings", JSON.stringify(state)); localStorage.setItem("ivt-stats", JSON.stringify(stats)); }catch(e){} };
@@ -244,6 +292,9 @@ function renderChips(){
     b.onclick=()=>{ toggle(state.modes,m.id); renderChips(); newQuestion(false); };
     mc.appendChild(b);
   });
+  const n = state.iv.length;
+  document.getElementById("setSummary").textContent =
+    `${n} ${n===1?"Intervall":"Intervalle"} · ${state.modes.map(m=>MODES.find(x=>x.id===m).name).join(", ")}`;
   save();
 }
 function toggle(arr,v){ const i=arr.indexOf(v); if(i>=0){ if(arr.length>1) arr.splice(i,1);} else { arr.push(v); arr.sort((a,b)=>a-b);} }
@@ -317,7 +368,7 @@ function renderExplore(){
   IV.forEach(i=>{
     const row=document.createElement("div"); row.className="erow";
     row.innerHTML=`<div><h3>${i.name}</h3><p>C → ${nameOf(60+i.s)} · ${i.s} Halbtöne · ↑ ${i.up} · ↓ ${i.down}</p></div>
-      <div class="mini"><button aria-label="${i.name} aufsteigend">↑</button><button aria-label="${i.name} absteigend">↓</button><button aria-label="${i.name} harmonisch">≡</button></div>`;
+      <div class="mini"><button aria-label="${i.name} aufsteigend">↑ auf</button><button aria-label="${i.name} absteigend">↓ ab</button><button aria-label="${i.name} harmonisch">≡ zus.</button></div>`;
     const [u,d,h]=row.querySelectorAll("button");
     u.onclick=()=>playInterval(60,i.s,"up");
     d.onclick=()=>playInterval(72,i.s,"down");
@@ -335,8 +386,18 @@ function newSing(){
   sg={semis,dir,root};
   document.getElementById("sgTask").textContent=`${ivBy(semis).name} ${dir==="up"?"aufwärts":"abwärts"}`;
   document.getElementById("sgNotes").innerHTML=`${nameOf(root)} ${dir==="up"?"↗":"↘"} <span class="q">?</span>`;
-  document.getElementById("sgHint").textContent=`Merkhilfe: ${dir==="up"?ivBy(semis).up:ivBy(semis).down}. Hör den Startton und sing den Zielton.`;
+  sgHintText();
 }
+function sgHintText(){
+  if(!sg) return;
+  const iv=ivBy(sg.semis), song = sg.dir==="up" ? iv.up : iv.down;
+  document.getElementById("sgHint").textContent = state.singHints
+    ? `Merkhilfe: ${song}. Hör den Startton und sing den Zielton.`
+    : "Hör den Startton und sing den Zielton.";
+}
+const sgToggle=document.getElementById("sgHintsToggle");
+sgToggle.checked = state.singHints;
+sgToggle.onchange=()=>{ state.singHints = sgToggle.checked; save(); sgHintText(); };
 document.getElementById("sgPlay").onclick=()=>{ if(!sg) newSing(); tone(sg.root, ac().currentTime+0.05, 1.6); };
 document.getElementById("sgCheck").onclick=()=>{
   if(!sg) newSing();
@@ -356,13 +417,14 @@ document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
   if(view==="sing" && !sg) newSing();
 });
 document.addEventListener("keydown",e=>{
-  if(view!=="quiz" || e.target.closest("button.tab")) return;
+  if(view!=="quiz" || e.target.closest("button.tab, summary, input, .chip")) return;
   if(e.code==="Space"){ e.preventDefault(); document.getElementById("qPlay").click(); }
   else if(e.key==="Enter" && answered){ e.preventDefault(); newQuestion(); }
   else if(/^[1-9]$/.test(e.key) && q && !answered){ const s=state.iv[+e.key-1]; if(s!==undefined) answer(s); }
 });
 
 renderChips(); renderExplore(); updateStats();
+document.getElementById("settings").open = window.innerWidth > 520;
 newQuestion(false);
 document.getElementById("qMode").textContent="Bereit?";
 document.getElementById("qHint").textContent="Tippe auf Play, um das erste Intervall zu hören.";
