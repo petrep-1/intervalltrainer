@@ -194,7 +194,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
   <!-- EXPLORE -->
   <section id="view-explore" class="card" hidden>
-    <p class="hint" style="margin:0">Hör dir jedes Intervall in Ruhe an. Startton ist immer C.</p>
+    <div>
+      <p class="label">Startton</p>
+      <div class="chips" id="rootChips"></div>
+    </div>
+    <div>
+      <p class="label">Lage</p>
+      <div class="chips" id="octChips"></div>
+    </div>
+    <p class="hint" style="margin:0" id="exploreHint"></p>
     <div class="explore" id="exploreList"></div>
   </section>
 
@@ -363,16 +371,44 @@ document.getElementById("qNext").onclick=()=>newQuestion();
 document.getElementById("qReset").onclick=()=>{ stats={}; right=total=streak=0; updateStats(); save(); };
 
 /* ---------- Explore ---------- */
+const OCT = [{id:48,name:"tief"},{id:60,name:"mittel"},{id:72,name:"hoch"}];
+if(state.exRoot === undefined) state.exRoot = 0;      // 0–11 oder "rand"
+if(state.exOct === undefined) state.exOct = 60;
+function exRootMidi(){
+  const pc = state.exRoot==="rand" ? Math.floor(Math.random()*12) : state.exRoot;
+  return state.exOct + pc;
+}
+function renderExploreSettings(){
+  const rc=document.getElementById("rootChips"); rc.innerHTML="";
+  [...NOTE.map((n,i)=>({v:i,label:n})), {v:"rand",label:"Zufällig"}].forEach(o=>{
+    const b=document.createElement("button"); b.className="chip"; b.id="root-"+o.v;
+    b.setAttribute("aria-pressed", state.exRoot===o.v); b.textContent=o.label;
+    b.onclick=()=>{ state.exRoot=o.v; save(); renderExploreSettings(); renderExplore(); };
+    rc.appendChild(b);
+  });
+  const oc=document.getElementById("octChips"); oc.innerHTML="";
+  OCT.forEach(o=>{
+    const b=document.createElement("button"); b.className="chip"; b.id="oct-"+o.id;
+    b.setAttribute("aria-pressed", state.exOct===o.id); b.textContent=o.name;
+    b.onclick=()=>{ state.exOct=o.id; save(); renderExploreSettings(); };
+    oc.appendChild(b);
+  });
+  document.getElementById("exploreHint").textContent = state.exRoot==="rand"
+    ? "Bei jedem Abspielen wird ein neuer Startton gewählt."
+    : `Alle Intervalle starten auf ${NOTE[state.exRoot]}.`;
+}
 function renderExplore(){
   const box=document.getElementById("exploreList"); box.innerHTML="";
+  const rand = state.exRoot==="rand", r = rand ? 0 : state.exRoot;
   IV.forEach(i=>{
     const row=document.createElement("div"); row.className="erow";
-    row.innerHTML=`<div><h3>${i.name}</h3><p>C → ${nameOf(60+i.s)} · ${i.s} Halbtöne · ↑ ${i.up} · ↓ ${i.down}</p></div>
+    const tones = rand ? `${i.s} Halbtöne` : `↑ ${NOTE[r]} → ${nameOf(r+i.s)} · ↓ ${NOTE[r]} → ${nameOf(r-i.s)} · ${i.s} Halbtöne`;
+    row.innerHTML=`<div><h3>${i.name}</h3><p>${tones}</p><p>Merkhilfe ↑ ${i.up} · ↓ ${i.down}</p></div>
       <div class="mini"><button aria-label="${i.name} aufsteigend">↑ auf</button><button aria-label="${i.name} absteigend">↓ ab</button><button aria-label="${i.name} harmonisch">≡ zus.</button></div>`;
     const [u,d,h]=row.querySelectorAll("button");
-    u.onclick=()=>playInterval(60,i.s,"up");
-    d.onclick=()=>playInterval(72,i.s,"down");
-    h.onclick=()=>playInterval(60,i.s,"harm");
+    u.onclick=()=>playInterval(exRootMidi(),i.s,"up");
+    d.onclick=()=>playInterval(exRootMidi(),i.s,"down");
+    h.onclick=()=>playInterval(exRootMidi(),i.s,"harm");
     box.appendChild(row);
   });
 }
@@ -423,7 +459,7 @@ document.addEventListener("keydown",e=>{
   else if(/^[1-9]$/.test(e.key) && q && !answered){ const s=state.iv[+e.key-1]; if(s!==undefined) answer(s); }
 });
 
-renderChips(); renderExplore(); updateStats();
+renderChips(); renderExploreSettings(); renderExplore(); updateStats();
 document.getElementById("settings").open = window.innerWidth > 520;
 newQuestion(false);
 document.getElementById("qMode").textContent="Bereit?";
