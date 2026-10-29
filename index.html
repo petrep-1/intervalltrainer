@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Intervall-Trainer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,6 +25,7 @@
   --accent:#5fb0cf; --accent-ink:#0b1418; --brass:#e0ac55;
   --good:#6cc98a; --good-bg:#18302158; --bad:#ee8a78; --bad-bg:#3a1d1858; color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
 .wrap{max-width:620px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
@@ -83,6 +89,8 @@ button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
 @media (max-width:420px){.card{padding:16px}.answers{grid-template-columns:1fr 1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header>
@@ -361,3 +369,6 @@ document.getElementById("qHint").textContent="Tippe auf Play, um das erste Inter
 document.getElementById("qReplay").hidden=true;
 q=null;
 </script>
+
+</body>
+</html>
