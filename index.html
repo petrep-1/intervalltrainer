@@ -219,7 +219,7 @@ td.pc{width:42%}
 
 /* Navigation: Bereich + Tabs */
 .nav{display:flex;flex-direction:column;gap:8px}
-.sect{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sect{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .sectbtn{display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:800 17px var(--display);letter-spacing:-.01em;padding:12px 8px;border-radius:14px;cursor:pointer;box-shadow:var(--shadow);transition:background .15s,color .15s,border-color .15s}
 .sectbtn svg{width:22px;height:22px;flex:none}
 .sectbtn:hover{border-color:var(--ink)}
@@ -292,6 +292,37 @@ td.pc{width:42%}
 .cslot.bad{border:1.5px solid var(--bad);background:var(--bad-bg);color:var(--bad)}
 .cslot .sol{font:700 12px var(--body);color:var(--brass)}
 .cslot:disabled{cursor:default}
+
+/* Rhythmus */
+.rstaff{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:8px 6px;overflow-x:auto}
+.rstaff svg{display:block;width:100%;height:auto;min-width:300px}
+.rstaff .ln{stroke:var(--ink);stroke-width:1.2;opacity:.7}
+.rstaff .bar{stroke:var(--ink);stroke-width:1.3}
+.rstaff .bar.end{stroke-width:3.5}
+.rstaff .tsig{fill:var(--ink);font:800 17px var(--display)}
+.rstaff .cap{fill:var(--muted);font:700 9px var(--body);letter-spacing:.06em}
+.rstaff .rn{color:var(--ink)}
+.rstaff .rn.ok{color:var(--good)} .rstaff .rn.near{color:var(--warn)} .rstaff .rn.bad{color:var(--bad)} .rstaff .rn.sol{color:var(--brass)}
+.rstaff .beam{fill:var(--ink)}
+.rstaff .empty{fill:none;stroke:var(--accent);stroke-dasharray:3 3;stroke-width:1.2}
+.rstaff .phead{fill:var(--accent);opacity:.85}
+.rstaff .tap{stroke-width:2.4;stroke-linecap:round}
+.rstaff .tap.ok{stroke:var(--good)} .rstaff .tap.near{stroke:var(--warn)} .rstaff .tap.bad{stroke:var(--bad)}
+.tappad{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;min-height:130px;border:0;border-radius:18px;cursor:pointer;
+  background:var(--accent);color:var(--accent-ink);font:800 26px var(--display);touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:transform .06s,background .15s}
+.tappad small{font:600 13px var(--body);opacity:.85}
+.tappad.armed{background:var(--ink);color:var(--bg)}
+.tappad.hit{transform:scale(.97)}
+.rpalette{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.rcell{border:1.5px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:12px;padding:6px 4px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:64px}
+.rcell svg{height:40px;width:auto;max-width:100%}
+.rcell small{font:600 10.5px var(--body);color:var(--muted);text-align:center;line-height:1.2}
+.rcell:hover:not(:disabled){border-color:var(--accent)}
+.rcell:disabled{opacity:.35;cursor:default}
+.rcell .rn{color:var(--ink)} .rcell .beam{fill:var(--ink)}
+.chip svg.mini{height:22px;width:auto;margin:-4px 0}
+.chip .rn{color:currentColor} .chip .beam{fill:currentColor}
+.tabs.twor{grid-template-columns:repeat(2,minmax(0,1fr))}
 
 /* Merkhilfen */
 .hrow{padding:16px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
@@ -369,6 +400,7 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
       <button class="sectbtn" role="tab" id="sect-iv" data-sect="iv" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 17V6l10-2v11" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="5.5" cy="17.5" rx="3" ry="2.3" fill="currentColor"/><ellipse cx="15.5" cy="15.5" rx="3" ry="2.3" fill="currentColor"/></svg><span>Intervalle</span></button>
       <button class="sectbtn" role="tab" id="sect-ch" data-sect="ch" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 19V3" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="12.5" cy="19" rx="3.6" ry="2.5" fill="currentColor"/><ellipse cx="12.5" cy="13.2" rx="3.6" ry="2.5" fill="currentColor"/><ellipse cx="12.5" cy="7.4" rx="3.6" ry="2.5" fill="currentColor"/></svg><span>Akkorde</span></button>
       <button class="sectbtn" role="tab" id="sect-dk" data-sect="dk" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4.5L16 4.5l3.5 3.5L8.5 19z M13.5 7l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Diktat</span></button>
+      <button class="sectbtn" role="tab" id="sect-rh" data-sect="rh" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 21h9L13.8 4h-3.6z M12 16l5.5-9.5 M6.5 21h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><span>Rhythmus</span></button>
     </div>
     <div class="tabs" role="tablist" id="tabsIv">
       <button class="tab" role="tab" id="tab-quiz" aria-selected="true" data-view="quiz">Quiz</button>
@@ -384,6 +416,10 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
     <div class="tabs two" role="tablist" id="tabsDk" hidden>
       <button class="tab" role="tab" id="tab-mdict" aria-selected="false" data-view="mdict">Melodie</button>
       <button class="tab" role="tab" id="tab-cdict" aria-selected="false" data-view="cdict">Akkordfolge</button>
+    </div>
+    <div class="tabs twor" role="tablist" id="tabsRh" hidden>
+      <button class="tab" role="tab" id="tab-rread" aria-selected="false" data-view="rread">Vom Blatt</button>
+      <button class="tab" role="tab" id="tab-rdict" aria-selected="false" data-view="rdict">Rhythmusdiktat</button>
     </div>
   </nav>
 
@@ -683,6 +719,60 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
       <button class="btn ghost" id="cdMine">Meine Antwort anhören</button>
     </div>
     <div class="statblock" id="cdStats"></div>
+  </section>
+
+  <!-- RHYTHMUS: gemeinsame Einstellungen -->
+  <details class="setbox" id="rhSettings" hidden>
+    <summary><b>Einstellungen</b><span id="rhSum"></span></summary>
+    <section class="settings">
+      <div><p class="label">Rhythmusbausteine</p><div class="chips" id="rhCells"></div></div>
+      <div><p class="label">Länge</p><div class="chips" id="rhBars"></div></div>
+      <div><p class="label">Tempo</p><div class="chips" id="rhBpm"></div></div>
+      <div><p class="label">Metronom während des Rhythmus</p><div class="chips" id="rhMetro"></div></div>
+    </section>
+  </details>
+
+  <!-- RHYTHMUS VOM BLATT -->
+  <section id="view-rread" class="card" hidden>
+    <div class="playinfo">
+      <span class="pill" id="rrPill">Vom Blatt</span>
+      <div class="mode-tag" id="rrTitle">Rhythmus mittippen</div>
+      <div class="hint" id="rrHint">Tippe auf Start. Nach vier Schlägen Einzählen tippst du bei jedem Notenbeginn auf die große Fläche.</div>
+    </div>
+    <div class="rstaff" id="rrStaff"></div>
+    <button class="tappad" id="rrPad" type="button" aria-label="Tippen"><span id="rrPadText">Start</span><small id="rrPadSub">oder Leertaste</small></button>
+    <div id="rrFeedback" hidden></div>
+    <div class="btnrow">
+      <button class="btn ghost" id="rrListen">Rhythmus anhören</button>
+      <button class="btn ghost" id="rrNew">Neuer Rhythmus</button>
+    </div>
+    <div class="statblock" id="rrStats"></div>
+  </section>
+
+  <!-- RHYTHMUSDIKTAT -->
+  <section id="view-rdict" class="card" hidden>
+    <div class="playrow">
+      <button class="play" id="rdPlay" aria-label="Rhythmus abspielen"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      <div class="playinfo">
+        <span class="pill" id="rdPill">Diktat</span>
+        <div class="mode-tag" id="rdTitle">Rhythmusdiktat</div>
+        <div class="hint" id="rdHint">Tippe auf Play, hör zu und setze den Rhythmus aus den Bausteinen zusammen.</div>
+      </div>
+    </div>
+    <div class="rstaff" id="rdStaff"></div>
+    <div class="rpalette" id="rdPalette"></div>
+    <div id="rdFeedback" hidden></div>
+    <div class="btnrow" id="rdEditRow">
+      <button class="btn" id="rdCheck">Prüfen</button>
+      <button class="btn ghost" id="rdUndo">Rückgängig</button>
+      <button class="btn ghost" id="rdClear">Alles löschen</button>
+    </div>
+    <div class="btnrow" id="rdDoneRow" hidden>
+      <button class="btn" id="rdNew">Nächster Rhythmus</button>
+      <button class="btn ghost" id="rdAgain">Nochmal hören</button>
+      <button class="btn ghost" id="rdMine">Meine Lösung anhören</button>
+    </div>
+    <div class="statblock" id="rdStats"></div>
   </section>
 
   <footer>Tastatur im Quiz: <kbd>Leertaste</kbd> abspielen · <kbd>1</kbd>–<kbd>0</kbd> antworten · <kbd>Enter</kbd> weiter</footer>
@@ -2110,13 +2200,337 @@ $pc("cdAgain").onclick=()=>{ if(cd.q) cdPlaySeq(cd.q.seq, false); };
 $pc("cdMine").onclick=()=>{ if(cd.q) cdPlaySeq(cd.ans.map(x=>x??0), false); };
 cdSettings(); cdLabelUi(); cdRenderSlots(); cdRenderAnswers();
 
+/* =====================================================================
+   RHYTHMUS
+   Ein Rhythmus besteht aus Bausteinen (je 1–4 Schläge im 4/4-Takt).
+   Zeit wird in Sechzehnteln gezählt. "Vom Blatt": Noten lesen und
+   mittippen. "Diktat": hören und aus Bausteinen zusammensetzen.
+   ===================================================================== */
+// ev: [Dauer in Sechzehnteln, Pause?]
+const RCELLS={
+  q:   {ev:[[4]],              beats:1, name:"Viertel"},
+  qr:  {ev:[[4,1]],            beats:1, name:"Viertelpause"},
+  h:   {ev:[[8]],              beats:2, align:2, name:"Halbe"},
+  hr:  {ev:[[8,1]],            beats:2, align:2, name:"halbe Pause"},
+  w:   {ev:[[16]],             beats:4, align:4, name:"Ganze"},
+  ee:  {ev:[[2],[2]],          beats:1, name:"2 Achtel"},
+  re:  {ev:[[2,1],[2]],        beats:1, name:"Achtelpause + Achtel"},
+  hd:  {ev:[[12]],             beats:3, align:4, name:"punktierte Halbe"},
+  qde: {ev:[[6],[2]],          beats:2, align:2, name:"punkt. Viertel + Achtel"},
+  ssss:{ev:[[1],[1],[1],[1]],  beats:1, name:"4 Sechzehntel"},
+  ess: {ev:[[2],[1],[1]],      beats:1, name:"Achtel + 2 Sechzehntel"},
+  sse: {ev:[[1],[1],[2]],      beats:1, name:"2 Sechzehntel + Achtel"},
+  eds: {ev:[[3],[1]],          beats:1, name:"punkt. Achtel + Sechzehntel"}
+};
+const RORDER=Object.keys(RCELLS);
+if(!state.rh) state.rh={};
+const RHD={cells:["q","qr","h","ee"], bars:2, bpm:80, metro:true};
+for(const k in RHD) if(state.rh[k]===undefined) state.rh[k]=Array.isArray(RHD[k])?[...RHD[k]]:RHD[k];
+
+/* --- Erzeugen --- */
+function rGenerate(){
+  const allowed=state.rh.cells, cells=[];
+  for(let b=0;b<state.rh.bars;b++){
+    let pos=0, restRun=0;
+    while(pos<4){
+      let cand=allowed.filter(id=>{ const c=RCELLS[id]; return c.beats<=4-pos && (!c.align || pos%c.align===0); });
+      // höchstens zwei Pausen hintereinander, nicht mit Pause beginnen
+      cand=cand.filter(id=>!(RCELLS[id].ev.every(e=>e[1]) && (restRun>=1 || (b===0&&pos===0))));
+      if(!cand.length) cand=["q"];
+      // einschlägige Bausteine etwas häufiger
+      const weighted=cand.flatMap(id=> RCELLS[id].beats===1 ? [id,id] : [id]);
+      const id=pick(weighted);
+      cells.push({id, start:b*4+pos});
+      restRun = RCELLS[id].ev.every(e=>e[1]) ? restRun+1 : 0;
+      pos+=RCELLS[id].beats;
+    }
+  }
+  return cells;
+}
+function rEvents(cells){
+  const ev=[];
+  cells.forEach((c,ci)=>{ let s=c.start*4; RCELLS[c.id].ev.forEach(([d,r],k)=>{ ev.push({s,d,r:!!r,ci,k}); s+=d; }); });
+  return ev;
+}
+
+/* --- Notenbild (einzeiliges Rhythmus-System) --- */
+const RU=13, R_LY=50;
+function restGlyph(d,x,y){
+  if(d>=16) return `<rect x="${x-6}" y="${y}" width="12" height="5" fill="currentColor"/>`;
+  if(d>=8)  return `<rect x="${x-6}" y="${y-5}" width="12" height="5" fill="currentColor"/>`;
+  if(d>=4)  return `<path d="M${x-2.5} ${y-14} l5.5 6.5 l-5 5 l5.5 6.5 c-5.5 -2.5 -8 1 -3.5 5.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round"/>`;
+  return `<circle cx="${x-2.5}" cy="${y-7}" r="2.3" fill="currentColor"/><path d="M${x-2.5} ${y-6} c3 1.6 5.5 0 6.5 -2.8 L${x-0.5} ${y+7}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>`;
+}
+function drawEvents(ev, xOf, cls){
+  const LY=R_LY, byCell={};
+  ev.forEach((e,i)=>{ (byCell[e.ci] ||= []).push(i); });
+  let g="";
+  ev.forEach((e,i)=>{
+    const x=xOf(e.s), c=cls?cls(i):"";
+    if(e.r){ g+=`<g class="rn ${c}">${restGlyph(e.d,x,LY)}</g>`; return; }
+    let n=`<g class="rn ${c}">`;
+    const hollow=e.d>=8;
+    n+=`<ellipse cx="${x}" cy="${LY}" rx="5.4" ry="3.9" transform="rotate(-20 ${x} ${LY})" ${hollow?'fill="none" stroke="currentColor" stroke-width="1.7"':'fill="currentColor"'}/>`;
+    if([3,6,12].includes(e.d)) n+=`<circle cx="${x+9.5}" cy="${LY-3}" r="1.8" fill="currentColor"/>`;
+    if(e.d<16) n+=`<line x1="${x+4.9}" x2="${x+4.9}" y1="${LY-1.5}" y2="${LY-28}" stroke="currentColor" stroke-width="1.5"/>`;
+    const grp=byCell[e.ci].filter(j=>!ev[j].r && ev[j].d<4);
+    if(e.d<4 && grp.length<2){
+      for(let f=0; f<(e.d===1?2:1); f++) n+=`<path d="M${x+4.9} ${LY-28+f*6} c0 6 8 8 6 15" fill="none" stroke="currentColor" stroke-width="1.7"/>`;
+    }
+    g+=n+`</g>`;
+  });
+  Object.values(byCell).forEach(idx=>{
+    const grp=idx.filter(j=>!ev[j].r && ev[j].d<4);
+    if(grp.length<2) return;
+    const sx=j=>xOf(ev[j].s)+4.9;
+    g+=`<rect class="beam" x="${sx(grp[0])-0.75}" y="${LY-28}" width="${sx(grp[grp.length-1])-sx(grp[0])+1.5}" height="3.6"/>`;
+    grp.forEach((j,k)=>{
+      if(ev[j].d!==1) return;
+      const prev=k>0 && ev[grp[k-1]].d===1, next=k<grp.length-1 && ev[grp[k+1]].d===1;
+      if(next) g+=`<rect class="beam" x="${sx(j)-0.75}" y="${LY-22}" width="${sx(grp[k+1])-sx(j)+1.5}" height="3.6"/>`;
+      else if(!prev){ const x1 = k===grp.length-1 ? sx(j)-7 : sx(j); g+=`<rect class="beam" x="${x1-0.75}" y="${LY-22}" width="8.5" height="3.6"/>`; }
+    });
+  });
+  return g;
+}
+function rBarX(b){ return 40 + b*(16*RU+18); }
+function rXOf(s16){ const b=Math.floor(s16/16); return rBarX(b)+10+(s16-b*16)*RU; }
+function rhythmSVG(cells, bars, o={}){
+  const W=rBarX(bars)+4, H=o.taps?100:82, LY=R_LY;
+  let g=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(o.caption||"Rhythmus")}">`;
+  if(o.caption) g+=`<text class="cap" x="40" y="11">${esc(o.caption.toUpperCase())}</text>`;
+  g+=`<line class="ln" x1="4" x2="${W-4}" y1="${LY}" y2="${LY}"/>`;
+  g+=`<text class="tsig" x="14" y="${LY-3}">4</text><text class="tsig" x="14" y="${LY+15}">4</text>`;
+  for(let b=1;b<=bars;b++){
+    const x=rBarX(b)-6;
+    if(b<bars) g+=`<line class="bar" x1="${x}" x2="${x}" y1="${LY-14}" y2="${LY+14}"/>`;
+    else g+=`<line class="bar" x1="${x-5}" x2="${x-5}" y1="${LY-14}" y2="${LY+14}"/><line class="bar end" x1="${x}" x2="${x}" y1="${LY-14}" y2="${LY+14}"/>`;
+  }
+  const ev=rEvents(cells);
+  g+=drawEvents(ev, rXOf, o.cls);
+  if(o.fillFrom!==undefined && o.fillFrom<bars*16){   // noch offene Fläche im Diktat
+    const x1=rXOf(o.fillFrom)-6, x2=rBarX(bars)-14;
+    g+=`<rect class="empty" x="${x1}" y="${LY-30}" width="${Math.max(10,x2-x1)}" height="44" rx="7"/>`;
+  }
+  (o.taps||[]).forEach(tp=>{ const x=rXOf(Math.max(0,Math.min(bars*16-0.01,tp.s16))); g+=`<line class="tap ${tp.cls}" x1="${x}" x2="${x}" y1="${LY+22}" y2="${LY+32}"/>`; });
+  if(o.playhead) g+=`<rect class="phead" id="${o.playhead}" x="-10" y="${LY-34}" width="2.5" height="50" rx="1"/>`;
+  return g+`</svg>`;
+}
+function miniCell(id){
+  const c=RCELLS[id], w=c.beats*4*RU+16;
+  const ev=rEvents([{id,start:0}]);
+  return `<svg class="mini" viewBox="-2 14 ${w} 46" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${drawEvents(ev, s=>10+s*RU)}</svg>`;
+}
+
+/* --- Klang: Metronom und Rhythmus-Ton --- */
+function rClick(c, t, accent, quiet){
+  const o=c.createOscillator(), g=c.createGain();
+  o.type="square"; o.frequency.value=accent?1760:1320;
+  const v=(quiet?0.05:0.13)*(accent?1.3:1);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(v,t+0.002); g.gain.exponentialRampToValueAtTime(0.0001,t+0.045);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+0.06);
+  o.onended=()=>{ try{ o.disconnect(); g.disconnect(); }catch(e){} };
+}
+function rNote(c, t, dur){
+  const o=c.createOscillator(), g=c.createGain();
+  o.type="triangle"; o.frequency.value=659.3;
+  const end=t+Math.max(0.06,dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.32,t+0.006);
+  g.gain.setValueAtTime(0.26,end-0.04); g.gain.exponentialRampToValueAtTime(0.0001,end);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(end+0.02);
+  o.onended=()=>{ try{ o.disconnect(); g.disconnect(); }catch(e){} };
+}
+// spielt Einzählen + optional Rhythmus/Metronom; liefert Zeitpunkte zurück
+function rPlay(cells, {notes=true, metro=state.rh.metro, countIn=true}={}){
+  const c=ac(), spb=60/state.rh.bpm, s16=spb/4, bars=state.rh.bars;
+  const t=c.currentTime+0.12, t0=t+(countIn?4*spb:0);
+  if(countIn) for(let i=0;i<4;i++) rClick(c, t+i*spb, i===0, false);
+  if(metro) for(let i=0;i<bars*4;i++) rClick(c, t0+i*spb, i%4===0, true);
+  if(notes) rEvents(cells).forEach(e=>{ if(!e.r) rNote(c, t0+e.s*s16, e.d*s16*0.88); });
+  return {c, t, t0, s16, end:t0+bars*16*s16};
+}
+// Abspielposition als Linie im Notenbild anzeigen
+let rRaf=0;
+function rPlayhead(id, p){
+  cancelAnimationFrame(rRaf);
+  const step=()=>{
+    const el=document.getElementById(id); if(!el) return;
+    const lat=(p.c.outputLatency||p.c.baseLatency||0);
+    const s16=(p.c.currentTime-lat-p.t0)/p.s16, total=state.rh.bars*16;
+    if(s16>total+1){ el.setAttribute("x",-10); return; }
+    el.setAttribute("x", s16<0 ? -10 : rXOf(Math.min(total-0.01,s16))-1);
+    rRaf=requestAnimationFrame(step);
+  };
+  rRaf=requestAnimationFrame(step);
+}
+
+/* --- Einstellungen (gemeinsam für beide Übungen) --- */
+function rhSettings(){
+  const box=$pc("rhCells"); box.innerHTML="";
+  RORDER.forEach(id=>{
+    const b=document.createElement("button"); b.className="chip"; b.type="button";
+    b.setAttribute("aria-pressed", state.rh.cells.includes(id));
+    b.innerHTML=miniCell(id)+`<span>${esc(RCELLS[id].name)}</span>`;
+    b.onclick=()=>{ toggleKeep(state.rh.cells,id,RORDER); save(); rhSettings(); rdRenderPalette(); };
+    box.appendChild(b);
+  });
+  chipGroup($pc("rhBars"), [1,2,4].map(n=>({v:n,label:n===1?"1 Takt":n+" Takte"})), v=>state.rh.bars===v, v=>{ state.rh.bars=v; rr.q=null; rd.q=null; rrNew(); rdReset(); });
+  chipGroup($pc("rhBpm"), [60,80,100,120].map(n=>({v:n,label:n+" BPM"})), v=>state.rh.bpm===v, v=>{ state.rh.bpm=v; });
+  chipGroup($pc("rhMetro"), [{v:true,label:"an"},{v:false,label:"aus",small:"nur Einzählen"}], v=>state.rh.metro===v, v=>{ state.rh.metro=v; });
+  rhSummary();
+}
+function rhSummary(){
+  $pc("rhSum").textContent=`${state.rh.cells.length} Bausteine · ${state.rh.bars} ${state.rh.bars===1?"Takt":"Takte"} · ${state.rh.bpm} BPM`;
+}
+["rhBars","rhBpm","rhMetro"].forEach(id=>$pc(id).addEventListener("click",()=>setTimeout(rhSummary,0)));
+
+/* ---------- 1) Vom Blatt mittippen ---------- */
+const rrStat=statBlock("rrStats");
+const rr={q:null, running:false, taps:[], play:null, timer:0};
+function rrNew(){
+  rr.q=rGenerate(); rr.running=false; clearTimeout(rr.timer);
+  $pc("rrFeedback").hidden=true;
+  $pc("rrStaff").innerHTML=rhythmSVG(rr.q, state.rh.bars, {playhead:"rrHead"});
+  rrPadUi("Start","oder Leertaste");
+}
+function rrPadUi(t,sub,armed){ $pc("rrPadText").textContent=t; $pc("rrPadSub").textContent=sub; $pc("rrPad").classList.toggle("armed",!!armed); }
+function rrStart(){
+  if(!rr.q) rrNew();
+  $pc("rrFeedback").hidden=true;
+  $pc("rrStaff").innerHTML=rhythmSVG(rr.q, state.rh.bars, {playhead:"rrHead"});
+  rr.taps=[]; rr.running=true;
+  rr.play=rPlay(rr.q, {notes:false});
+  rrPadUi("Einzählen …","1 – 2 – 3 – 4",true);
+  rPlayhead("rrHead", rr.play);
+  const p=rr.play, now=p.c.currentTime;
+  setTimeout(()=>{ if(rr.running) rrPadUi("Tippen!","bei jedem Notenbeginn",true); }, (p.t0-now)*1000-60);
+  rr.timer=setTimeout(rrEvaluate, (p.end-now)*1000+700);
+}
+// Zeitpunkt eines Tipps in Audio-Zeit umrechnen (berücksichtigt Ausgabelatenz)
+function tapCtxTime(c, ts){
+  try{ const o=c.getOutputTimestamp && c.getOutputTimestamp();
+    if(o && o.contextTime>0 && o.performanceTime>0) return o.contextTime+(ts-o.performanceTime)/1000; }catch(e){}
+  return c.currentTime-(c.outputLatency||c.baseLatency||0)-(performance.now()-ts)/1000;
+}
+function rrTap(ts){
+  if(!rr.running){ rrStart(); return; }
+  rr.taps.push(tapCtxTime(rr.play.c, ts));
+  const pad=$pc("rrPad"); pad.classList.add("hit"); setTimeout(()=>pad.classList.remove("hit"),70);
+}
+$pc("rrPad").addEventListener("pointerdown",e=>{ e.preventDefault(); rrTap(e.timeStamp); });
+function rrEvaluate(){
+  if(!rr.running) return;
+  rr.running=false;
+  const p=rr.play, s16=p.s16;
+  const good=Math.max(0.06, s16*0.45), near=Math.max(0.12, s16*0.9), win=Math.max(0.2, s16*1.6);
+  const ev=rEvents(rr.q), notes=ev.map((e,i)=>[e,i]).filter(([e])=>!e.r);
+  const taps=rr.taps.filter(t=>t>p.t0-win).map(t=>({t, used:false}));
+  const cls={}, devs=[];
+  notes.forEach(([e,i])=>{
+    const want=p.t0+e.s*s16;
+    let best=null; taps.forEach(tp=>{ if(!tp.used && Math.abs(tp.t-want)<=win && (!best || Math.abs(tp.t-want)<Math.abs(best.t-want))) best=tp; });
+    if(!best){ cls[i]="bad"; return; }
+    best.used=true; const d=best.t-want; devs.push(d);
+    best.cls = Math.abs(d)<=good ? "ok" : Math.abs(d)<=near ? "near" : "bad";
+    cls[i]=best.cls;
+  });
+  taps.forEach(tp=>{ if(!tp.used) tp.cls="bad"; });
+  const hit=notes.filter(([,i])=>cls[i]==="ok"||cls[i]==="near").length, extra=taps.filter(t=>!t.used).length;
+  const ok = hit===notes.length && extra===0 && notes.every(([,i])=>cls[i]!=="bad");
+  rrStat.add(ok);
+  $pc("rrStaff").innerHTML=rhythmSVG(rr.q, state.rh.bars, {cls:i=>cls[i]||"", taps:taps.map(tp=>({s16:(tp.t-p.t0)/s16, cls:tp.cls})), playhead:"rrHead"});
+  const avg=devs.length ? devs.reduce((a,b)=>a+b,0)/devs.length : 0;
+  const tend = Math.abs(avg)<0.02 ? "genau im Takt" : avg>0 ? `im Schnitt ${Math.round(avg*1000)} ms zu spät` : `im Schnitt ${Math.round(-avg*1000)} ms zu früh`;
+  const title = ok ? "Sauber getroffen!"
+    : hit===notes.length ? `Alle Einsätze getroffen, aber ${extra} ${extra===1?"Tipp":"Tipps"} zu viel`
+    : `${hit} von ${notes.length} Einsätzen getroffen`;
+  feedbackBox($pc("rrFeedback"), ok, title,
+    `<span>${devs.length?esc(tend):"Keine Einsätze erkannt."}${extra?` · ${extra} ${extra===1?"Tipp":"Tipps"} zu viel`:""}</span>
+     <div class="legend"><span><i style="background:var(--good)"></i>genau</span><span><i style="background:var(--warn)"></i>knapp</span><span><i style="background:var(--bad)"></i>daneben / fehlt</span></div>
+     <span class="hint">Striche unter der Linie zeigen, wann du getippt hast.</span>`);
+  rrPadUi("Nochmal","gleicher Rhythmus");
+}
+$pc("rrNew").onclick=rrNew;
+$pc("rrListen").onclick=()=>{ if(!rr.q) rrNew(); if(rr.running){ rr.running=false; clearTimeout(rr.timer); rrPadUi("Start","oder Leertaste"); }
+  const p=rPlay(rr.q,{notes:true}); rPlayhead("rrHead",p); };
+
+/* ---------- 2) Rhythmusdiktat ---------- */
+const rdStat=statBlock("rdStats");
+const rd={q:null, ans:[], checked:false, res:null};
+const rdUsed=()=>rd.ans.reduce((a,c)=>a+RCELLS[c.id].beats,0);
+function rdReset(){ rd.q=null; rd.ans=[]; rd.checked=false; rd.res=null; $pc("rdFeedback").hidden=true; $pc("rdEditRow").hidden=false; $pc("rdDoneRow").hidden=true; rdRender(); }
+function rdNew(){
+  rd.q=rGenerate(); rd.ans=[]; rd.checked=false; rd.res=null;
+  $pc("rdTitle").textContent=`Rhythmus mit ${state.rh.bars} ${state.rh.bars===1?"Takt":"Takten"}`;
+  $pc("rdHint").textContent="Erst wird eingezählt, dann kommt der Rhythmus.";
+  $pc("rdFeedback").hidden=true; $pc("rdEditRow").hidden=false; $pc("rdDoneRow").hidden=true;
+  rdRender();
+  const p=rPlay(rd.q); rPlayhead("rdHead",p);
+}
+function rdRender(){
+  const bars=state.rh.bars, used=rdUsed();
+  let html;
+  if(!rd.checked){
+    html=rhythmSVG(rd.ans, bars, {caption:"Deine Lösung", fillFrom:used*4, playhead:"rdHead"});
+  } else {
+    html=rhythmSVG(rd.ans, bars, {caption:"Deine Lösung", cls:i=>rd.res.mine[i]})+
+         rhythmSVG(rd.q, bars, {caption:"Lösung", cls:i=>rd.res.sol[i], playhead:"rdHead"});
+  }
+  $pc("rdStaff").innerHTML=html;
+  rdRenderPalette();
+}
+function rdRenderPalette(){
+  const box=$pc("rdPalette"); box.innerHTML="";
+  const used=rdUsed(), inBar=used%4, total=state.rh.bars*4;
+  state.rh.cells.forEach(id=>{
+    const c=RCELLS[id], b=document.createElement("button"); b.type="button"; b.className="rcell";
+    b.innerHTML=miniCell(id)+`<small>${esc(c.name)}</small>`;
+    b.disabled = !rd.q || rd.checked || used+c.beats>total || inBar+c.beats>4;
+    b.onclick=()=>{ rd.ans.push({id, start:rdUsed()}); rdRender(); };
+    box.appendChild(b);
+  });
+}
+function rdCheck(){
+  if(!rd.q || rd.checked) return;
+  const total=state.rh.bars*4, used=rdUsed();
+  if(used<total){
+    feedbackBox($pc("rdFeedback"), false, `Noch ${total-used} ${total-used===1?"Schlag":"Schläge"} offen`, "<span>Fülle erst alle Takte, dann prüfen.</span>");
+    return;
+  }
+  rd.checked=true;
+  const A=rEvents(rd.ans), B=rEvents(rd.q);
+  const sig=(ev,b)=>ev.filter(e=>Math.floor(e.s/16)===b).map(e=>`${e.s}:${e.d}:${e.r?1:0}`).join("|");
+  const barsOk=[...Array(state.rh.bars).keys()].map(b=>sig(A,b)===sig(B,b));
+  rd.res={ mine:A.map(e=>barsOk[Math.floor(e.s/16)]?"ok":"bad"), sol:B.map(e=>barsOk[Math.floor(e.s/16)]?"ok":"sol") };
+  const right=barsOk.filter(Boolean).length, ok=right===barsOk.length;
+  rdStat.add(ok);
+  feedbackBox($pc("rdFeedback"), ok, ok ? "Richtig, der Rhythmus stimmt!" : `${right} von ${barsOk.length} ${barsOk.length===1?"Takt":"Takten"} richtig`,
+    `<div class="legend"><span><i style="background:var(--good)"></i>Takt richtig</span><span><i style="background:var(--bad)"></i>Takt falsch</span><span><i style="background:var(--brass)"></i>richtige Lösung</span></div>`);
+  $pc("rdEditRow").hidden=true; $pc("rdDoneRow").hidden=false;
+  rdRender();
+}
+$pc("rdPlay").onclick=()=>{ if(!rd.q || rd.checked) rdNew(); else { const p=rPlay(rd.q); rPlayhead("rdHead",p); } };
+$pc("rdCheck").onclick=rdCheck;
+$pc("rdUndo").onclick=()=>{ if(rd.checked) return; rd.ans.pop(); rdRender(); };
+$pc("rdClear").onclick=()=>{ if(rd.checked) return; rd.ans=[]; $pc("rdFeedback").hidden=true; rdRender(); };
+$pc("rdNew").onclick=rdNew;
+$pc("rdAgain").onclick=()=>{ if(rd.q){ const p=rPlay(rd.q); rPlayhead("rdHead",p); } };
+$pc("rdMine").onclick=()=>{ if(rd.ans.length){ const p=rPlay(rd.ans); rPlayhead("rdHead",p); } };
+document.addEventListener("keydown",e=>{
+  if(view!=="rread" || e.repeat || e.target.closest("input, select, summary, .chip")) return;
+  if(e.code==="Space" || e.key==="Enter"){ e.preventDefault(); rrTap(e.timeStamp); }
+});
+rhSettings(); rrNew(); rdRender();
+
 /* ---------- Tabs & keys ---------- */
 let view="quiz";
-const VIEWS=["quiz","explore","sing","hints","ctype","cnotes","ckey","mdict","cdict"], CHORD_VIEWS=["ctype","cnotes","ckey"];
-const lastIn={iv:"quiz", ch:"ctype", dk:"mdict"};
+const VIEWS=["quiz","explore","sing","hints","ctype","cnotes","ckey","mdict","cdict","rread","rdict"], CHORD_VIEWS=["ctype","cnotes","ckey"];
+const lastIn={iv:"quiz", ch:"ctype", dk:"mdict", rh:"rread"};
 function showView(v){
   view=v;
-  lastIn[CHORD_VIEWS.includes(v)?"ch": (v==="mdict"||v==="cdict")?"dk":"iv"]=v;
+  lastIn[CHORD_VIEWS.includes(v)?"ch": (v==="mdict"||v==="cdict")?"dk": (v==="rread"||v==="rdict")?"rh":"iv"]=v;
+  document.getElementById("rhSettings").hidden = !(v==="rread"||v==="rdict");
+  if(v!=="rread" && rr.running){ rr.running=false; clearTimeout(rr.timer); rrPadUi("Start","oder Leertaste"); }
   document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.view===v));
   VIEWS.forEach(x=>document.getElementById("view-"+x).hidden = x!==v);
   document.getElementById("settings").hidden = !(v==="quiz" || v==="sing");
@@ -2133,6 +2547,7 @@ document.querySelectorAll(".sectbtn").forEach(b=>b.onclick=()=>{
   document.getElementById("tabsIv").hidden = s!=="iv";
   document.getElementById("tabsCh").hidden = s!=="ch";
   document.getElementById("tabsDk").hidden = s!=="dk";
+  document.getElementById("tabsRh").hidden = s!=="rh";
   showView(lastIn[s]);
 });
 document.addEventListener("keydown",e=>{
