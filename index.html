@@ -219,7 +219,7 @@ td.pc{width:42%}
 
 /* Navigation: Bereich + Tabs */
 .nav{display:flex;flex-direction:column;gap:8px}
-.sect{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:12px;background:color-mix(in srgb,var(--accent) 9%,var(--bg));border:1px solid var(--line)}
+.sect{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:12px;background:color-mix(in srgb,var(--accent) 9%,var(--bg));border:1px solid var(--line)}
 .sectbtn{border:0;background:transparent;color:var(--muted);font:700 15px var(--display);padding:8px;border-radius:9px;cursor:pointer;transition:background .15s,color .15s}
 .sectbtn:hover{color:var(--ink)}
 .sectbtn[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
@@ -252,6 +252,30 @@ td.pc{width:42%}
 .keybtn.miss{border-color:var(--brass);border-style:dashed;color:var(--brass)}
 .keybtn:disabled{cursor:default}
 .analysis{margin:4px 0 0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:3px}
+
+/* Diktat */
+.hint.center{text-align:center;margin:-6px 0 0}
+.inputsw{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.seg{display:inline-grid;grid-auto-flow:column;gap:3px;padding:3px;border-radius:11px;background:var(--surface-2);border:1px solid var(--line)}
+.seg button{border:0;background:transparent;color:var(--muted);font:700 14px var(--body);padding:8px 14px;border-radius:8px;cursor:pointer;min-height:38px}
+.seg button[aria-checked="true"]{background:var(--accent);color:var(--accent-ink)}
+.staffbox{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:6px 4px;overflow-x:auto}
+.staffbox svg{display:block;width:100%;height:auto;min-width:280px}
+.staffbox.edit svg{cursor:crosshair;touch-action:none}
+.staffbox .ln{stroke:var(--ink);stroke-width:1;opacity:.55}
+.staffbox .ledger{stroke:var(--ink);stroke-width:1.2;opacity:.8}
+.staffbox .glyph{fill:var(--ink);font-family:"Noto Music","Segoe UI Symbol","Apple Symbols","Bravura",serif}
+.staffbox .nt{fill:var(--ink)} .staffbox .nt line{stroke:var(--ink)}
+.staffbox .nt.given{fill:var(--muted)} .staffbox .nt.given line{stroke:var(--muted)}
+.staffbox .nt.sel{fill:var(--accent)} .staffbox .nt.sel line{stroke:var(--accent)}
+.staffbox .nt.ok{fill:var(--good)} .staffbox .nt.ok line{stroke:var(--good)}
+.staffbox .nt.bad{fill:var(--bad)} .staffbox .nt.bad line{stroke:var(--bad)}
+.staffbox .nt.sol{fill:var(--brass)} .staffbox .nt.sol line{stroke:var(--brass)}
+.staffbox .slot{fill:none;stroke:var(--accent);stroke-dasharray:3 3;stroke-width:1.2;opacity:.8}
+.staffbox .num{fill:var(--muted);font:600 9px var(--body)}
+.staffbox .cap{fill:var(--muted);font:700 9px var(--body);letter-spacing:.06em}
+.staffctl{display:flex;gap:6px;flex-wrap:wrap}
+.staffctl .sbtn{flex:1 1 auto;min-height:46px;font-size:15px}
 
 /* Merkhilfen */
 .hrow{padding:16px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
@@ -326,6 +350,7 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
     <div class="sect" role="tablist" aria-label="Bereich">
       <button class="sectbtn" role="tab" id="sect-iv" data-sect="iv" aria-selected="true">Intervalle</button>
       <button class="sectbtn" role="tab" id="sect-ch" data-sect="ch" aria-selected="false">Akkorde</button>
+      <button class="sectbtn" role="tab" id="sect-dk" data-sect="dk" aria-selected="false">Diktat</button>
     </div>
     <div class="tabs" role="tablist" id="tabsIv">
       <button class="tab" role="tab" id="tab-quiz" aria-selected="true" data-view="quiz">Quiz</button>
@@ -543,6 +568,54 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
       <button class="btn" id="ckNext" hidden>Neue Aufgabe</button>
     </div>
     <div class="statblock" id="ckStats"></div>
+  </section>
+
+  <!-- MELODIEDIKTAT -->
+  <section id="view-mdict" class="card" hidden>
+    <details class="setbox subset">
+      <summary><b>Einstellungen</b><span id="mdSum"></span></summary>
+      <section class="settings">
+        <div><p class="label">Länge</p><div class="chips" id="mdLen"></div></div>
+        <div><p class="label">Tonarten</p><div class="chips" id="mdKeys"></div></div>
+        <div><p class="label">Bewegung</p><div class="chips" id="mdMotion"></div></div>
+        <div><p class="label">Tempo</p><div class="chips" id="mdTempo"></div></div>
+        <div><p class="label">Erster Ton</p><div class="chips" id="mdGiven"></div></div>
+        <div><p class="label">Vor der Melodie</p><div class="chips" id="mdCad"></div></div>
+      </section>
+    </details>
+    <div class="playrow">
+      <button class="play" id="mdPlay" aria-label="Melodie abspielen"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      <div class="playinfo">
+        <span class="pill" id="mdPill">Diktat</span>
+        <div class="mode-tag" id="mdTitle">Melodiediktat</div>
+        <div class="hint" id="mdHint">Tippe auf Play, hör zu und schreib die Melodie mit.</div>
+      </div>
+    </div>
+    <div class="inputsw" role="radiogroup" aria-label="Eingabe">
+      <span class="label" style="margin:0">Eingabe</span>
+      <div class="seg" id="mdInput"></div>
+    </div>
+    <div class="staffbox" id="mdStaff"></div>
+    <div class="staffctl" id="mdStaffCtl">
+      <button class="sbtn" id="mdUp" aria-label="Ausgewählte Note höher">▲ höher</button>
+      <button class="sbtn" id="mdDown" aria-label="Ausgewählte Note tiefer">▼ tiefer</button>
+      <button class="sbtn" id="mdPrev" aria-label="Vorherige Note wählen">◀</button>
+      <button class="sbtn" id="mdNextSel" aria-label="Nächste Note wählen">▶</button>
+    </div>
+    <div class="kb piano" id="mdPiano"></div>
+    <p class="hint center" id="mdInputHint"></p>
+    <div id="mdFeedback" hidden></div>
+    <div class="btnrow" id="mdEditRow">
+      <button class="btn" id="mdCheck">Prüfen</button>
+      <button class="btn ghost" id="mdUndo">Rückgängig</button>
+      <button class="btn ghost" id="mdClear">Alles löschen</button>
+    </div>
+    <div class="btnrow" id="mdDoneRow" hidden>
+      <button class="btn" id="mdNew">Nächste Melodie</button>
+      <button class="btn ghost" id="mdAgain">Melodie nochmal</button>
+      <button class="btn ghost" id="mdMine">Meine Antwort anhören</button>
+    </div>
+    <div class="statblock" id="mdStats"></div>
   </section>
 
   <footer>Tastatur im Quiz: <kbd>Leertaste</kbd> abspielen · <kbd>1</kbd>–<kbd>0</kbd> antworten · <kbd>Enter</kbd> weiter</footer>
@@ -1380,7 +1453,7 @@ function ckSettings(){
   $pc("ckSum").textContent=`${state.ch.keyPool.length} Tonarten · Stufen ${state.ch.keyDeg.map(i=>DEG[i].r).join(" ")}`;
 }
 function ckNew(){
-  const key=KEYS.find(k=>k.n===pick(state.ch.keyPool));
+  const kn=pick(state.ch.keyPool), key=KEYS.find(k=>k.n===kn);
   const degs=[...state.ch.keyDeg].sort(()=>Math.random()-0.5).slice(0, Math.min(state.ch.keyN, state.ch.keyDeg.length));
   const all=keyChords(key), chords=degs.map(i=>all[i]);
   const answer=KEYS.filter(k=>{ const kc=keyChords(k); return chords.every(c=>kc.some(x=>x.pc===c.pc && x.q===c.q)); });
@@ -1442,13 +1515,274 @@ function chordSettingsAll(){ ctSettings(); cnSettings(); ckSettings(); }
 chordSettingsAll();
 ctRenderAnswers();
 
+/* =====================================================================
+   MELODIEDIKTAT
+   Melodien sind leitereigen in der gewählten Dur-Tonart, gleichmäßige
+   Viertel, Tonraum C4–H5. Eingabe per Klaviatur oder auf dem Notensystem.
+   ===================================================================== */
+const MD_KEYS=[
+  {n:"C",l:0,a:0,sh:0,fl:0},{n:"G",l:4,a:0,sh:1,fl:0},{n:"D",l:1,a:0,sh:2,fl:0},{n:"A",l:5,a:0,sh:3,fl:0},
+  {n:"F",l:3,a:0,sh:0,fl:1},{n:"B",l:6,a:-1,sh:0,fl:2},{n:"Es",l:2,a:-1,sh:0,fl:3}];
+const SHARP_ORDER=[3,0,4,1,5,2,6], FLAT_ORDER=[6,2,5,1,4,0,3];
+const SHARP_STEPS=[10,7,11,8,5,9,6], FLAT_STEPS=[6,9,5,8,4,7,3];   // Lage im Violinschlüssel
+const MD_LO=60, MD_HI=83, STEP_MIN=0, STEP_MAX=13;              // C4 … H5
+function keyAcc(key, L){
+  if(SHARP_ORDER.slice(0,key.sh).includes(L)) return 1;
+  if(FLAT_ORDER.slice(0,key.fl).includes(L)) return -1;
+  return 0;
+}
+function stepMidi(key, step){
+  const L=((step%7)+7)%7, oct=4+Math.floor(step/7);
+  return 12*(oct+1)+LETPC[L]+keyAcc(key,L);
+}
+// Ton im Kontext der Tonart notieren: Notenlinie + nötiges Vorzeichen
+function spellInKey(key, midi){
+  const pc=((midi%12)+12)%12;
+  const fit=(L,acc)=>{ const o=(midi-LETPC[L]-acc)/12-1; return Number.isInteger(o) ? L+7*(o-4) : null; };
+  for(let L=0;L<7;L++){
+    const acc=keyAcc(key,L);
+    if(((LETPC[L]+acc)%12+12)%12===pc) return {step:fit(L,acc), sign:null};
+  }
+  for(let L=0;L<7;L++){            // Vorzeichen der Tonart aufheben (z. B. F♮ in G-Dur)
+    if(keyAcc(key,L)!==0 && LETPC[L]===pc) return {step:fit(L,0), sign:"♮"};
+  }
+  const up = key.fl===0;           // Kreuz- und C-Tonarten: erhöhen, B-Tonarten: erniedrigen
+  for(let L=0;L<7;L++){
+    const acc=keyAcc(key,L)+(up?1:-1);
+    if(((LETPC[L]+acc)%12+12)%12===pc) return {step:fit(L,acc), sign: acc===0?"♮":acc>0?"♯":"♭"};
+  }
+  return {step:0, sign:null};
+}
+function midiLabel(key, midi){
+  const {step,sign}=spellInKey(key,midi), L=((step%7)+7)%7;
+  const acc=sign===null?keyAcc(key,L):sign==="♮"?0:sign==="♯"?keyAcc(key,L)+1:keyAcc(key,L)-1;
+  return spellName(L,acc);
+}
+
+/* --- Notensystem zeichnen (SVG) --- */
+const HS=6, Y_BASE=88;                         // halber Linienabstand; y von E4 (unterste Linie)
+const yOf=step=>Y_BASE-(step-2)*HS;
+const SLOT_W=40;
+function staffSVG(key, notes, o={}){
+  // notes: [{midi, cls}]  o: {slots, sel, caption}
+  const nSig=key.sh||key.fl, x0=40+nSig*10, slots=Math.max(o.slots||notes.length, notes.length);
+  const W=x0+slots*SLOT_W+12, H=118;
+  let g=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(o.caption||"Notensystem")}">`;
+  for(let i=0;i<5;i++){ const y=yOf(2+2*i); g+=`<line class="ln" x1="2" x2="${W-2}" y1="${y}" y2="${y}"/>`; }
+  g+=`<text class="glyph" x="4" y="${yOf(2)+10}" font-size="64">𝄞</text>`;
+  const sigSteps = key.sh ? SHARP_STEPS.slice(0,key.sh) : FLAT_STEPS.slice(0,key.fl);
+  sigSteps.forEach((st,i)=>{ g+=`<text class="glyph" x="${36+i*10}" y="${yOf(st)+(key.sh?5:4)}" font-size="${key.sh?17:19}">${key.sh?"♯":"♭"}</text>`; });
+  if(o.caption) g+=`<text class="cap" x="${x0}" y="11">${esc(o.caption.toUpperCase())}</text>`;
+  for(let i=0;i<slots;i++){
+    const cx=x0+i*SLOT_W+SLOT_W/2;
+    g+=`<text class="num" x="${cx}" y="${H-3}" text-anchor="middle">${i+1}</text>`;
+    const nt=notes[i];
+    if(!nt){ if(o.next===i) g+=`<rect class="slot" x="${cx-11}" y="${yOf(12)}" width="22" height="${yOf(0)-yOf(12)}" rx="6"/>`; continue; }
+    const {step,sign}=spellInKey(key, nt.midi), y=yOf(step);
+    let n=`<g class="nt ${nt.cls||""}">`;
+    for(let s=0; s>=step; s-=2) n+=`<line class="ledger" x1="${cx-10}" x2="${cx+10}" y1="${yOf(s)}" y2="${yOf(s)}"/>`;
+    for(let s=12; s<=step; s+=2) n+=`<line class="ledger" x1="${cx-10}" x2="${cx+10}" y1="${yOf(s)}" y2="${yOf(s)}"/>`;
+    if(sign) n+=`<text class="glyph" x="${cx-19}" y="${y+5}" font-size="16">${sign}</text>`;
+    n+=`<ellipse cx="${cx}" cy="${y}" rx="6.6" ry="4.8" transform="rotate(-20 ${cx} ${y})"/>`;
+    const up=step<6;
+    n+= up ? `<line x1="${cx+6}" x2="${cx+6}" y1="${y-1}" y2="${y-33}" stroke-width="1.4"/>`
+           : `<line x1="${cx-6}" x2="${cx-6}" y1="${y+1}" y2="${y+33}" stroke-width="1.4"/>`;
+    if(o.sel===i) n+=`<rect x="${cx-16}" y="${y-14}" width="32" height="28" rx="7" fill="none" stroke="var(--accent)" stroke-width="1.5"/>`;
+    g+=n+`</g>`;
+  }
+  return g+`</svg>`;
+}
+
+/* --- Zustand und Einstellungen --- */
+if(!state.md) state.md={};
+const MDD={len:4, keys:["C","G","F"], motion:"third", tempo:"mid", input:"piano", given:true, cadence:true};
+for(const k in MDD) if(state.md[k]===undefined) state.md[k]=Array.isArray(MDD[k])?[...MDD[k]]:MDD[k];
+const mdStat=statBlock("mdStats");
+const md={q:null, ans:[], sel:-1, checked:false};
+const TEMPO={slow:0.95, mid:0.7, fast:0.5};
+function mdSettings(){
+  chipGroup($pc("mdLen"), [3,4,5,6,8].map(n=>({v:n,label:n+" Töne"})), v=>state.md.len===v, v=>{ state.md.len=v; });
+  chipGroup($pc("mdKeys"), MD_KEYS.map(k=>({v:k.n,label:k.n+"‑Dur",small:k.sh?k.sh+"♯":k.fl?k.fl+"♭":""})),
+    v=>state.md.keys.includes(v), v=>toggleKeep(state.md.keys,v,MD_KEYS.map(k=>k.n)));
+  chipGroup($pc("mdMotion"), [{v:"step",label:"nur Schritte"},{v:"third",label:"Schritte + Terzen"},{v:"leap",label:"auch Sprünge",small:"bis Sexte"}],
+    v=>state.md.motion===v, v=>{ state.md.motion=v; });
+  chipGroup($pc("mdTempo"), [{v:"slow",label:"langsam"},{v:"mid",label:"mittel"},{v:"fast",label:"schnell"}],
+    v=>state.md.tempo===v, v=>{ state.md.tempo=v; });
+  chipGroup($pc("mdGiven"), [{v:true,label:"vorgeben"},{v:false,label:"selbst finden"}],
+    v=>state.md.given===v, v=>{ state.md.given=v; });
+  chipGroup($pc("mdCad"), [{v:true,label:"Grundakkord spielen"},{v:false,label:"nichts"}],
+    v=>state.md.cadence===v, v=>{ state.md.cadence=v; });
+  mdSummary();
+}
+function mdSummary(){
+  $pc("mdSum").textContent=`${state.md.len} Töne · ${state.md.keys.map(k=>k+"‑Dur").join(", ")}`;
+}
+["mdLen","mdKeys","mdMotion","mdTempo","mdGiven","mdCad"].forEach(id=>$pc(id).addEventListener("click",()=>setTimeout(mdSummary,0)));
+function mdInputUi(){
+  const seg=$pc("mdInput"); seg.innerHTML="";
+  [["piano","Klaviatur"],["staff","Notenschrift"]].forEach(([v,l])=>{
+    const b=document.createElement("button"); b.type="button"; b.setAttribute("role","radio");
+    b.setAttribute("aria-checked", state.md.input===v); b.textContent=l;
+    b.onclick=()=>{ state.md.input=v; save(); mdInputUi(); mdRender(); };
+    seg.appendChild(b);
+  });
+  const staff=state.md.input==="staff";
+  $pc("mdPiano").hidden=staff || md.checked; $pc("mdStaffCtl").hidden=!staff || md.checked;
+  $pc("mdInputHint").textContent = md.checked ? "" : staff
+    ? "Tippe ins Notensystem, wo die nächste Note stehen soll. Mit ▲ ▼ korrigierst du die markierte Note."
+    : "Tippe die Töne der Reihe nach auf der Klaviatur an.";
+}
+
+/* --- Melodie erzeugen und abspielen --- */
+function mdGenerate(){
+  const kn=pick(state.md.keys), key=MD_KEYS.find(k=>k.n===kn), n=state.md.len;
+  const maxJ={step:1, third:2, leap:5}[state.md.motion];
+  const tonic=key.l, lo=Math.max(STEP_MIN,tonic-3), hi=Math.min(STEP_MAX,tonic+8);
+  const steps=[tonic];
+  for(let i=1;i<n;i++){
+    let s, tries=0;
+    do{
+      // kleine Schritte häufiger als große
+      const j=1+Math.floor(Math.pow(Math.random(),1.6)*maxJ);
+      s=steps[i-1]+(Math.random()<0.5?-j:j); tries++;
+    } while((s<lo||s>hi||s===steps[i-1]) && tries<60);
+    if(tries>=60) s=steps[i-1]+(steps[i-1]<hi?1:-1);
+    steps.push(s);
+  }
+  if(n>2){   // auf dem Grundton enden
+    const last=steps[n-2], c=[tonic,tonic+7,tonic-7].filter(s=>s>=STEP_MIN&&s<=STEP_MAX);
+    steps[n-1]=c.sort((a,b)=>Math.abs(a-last)-Math.abs(b-last))[0];
+    if(steps[n-1]===steps[n-2] && n>3) steps[n-2]+= steps[n-2]<hi ? 1 : -1;
+  }
+  return {key, notes:steps.map(s=>stepMidi(key,s))};
+}
+function mdPlayNotes(notes, withCad){
+  const c=ac(); let t=c.currentTime+0.05;
+  if(withCad){
+    const k=md.q.key, root=48+(((LETPC[k.l]+k.a)%12)+12)%12;
+    [0,4,7].forEach(s=>tone(root+12+s,t,1.3,0.5)); tone(root,t,1.3,0.5);
+    t+=1.6;
+  }
+  const d=TEMPO[state.md.tempo];
+  notes.forEach((m,i)=>tone(m,t+i*d,d*1.25,1));
+  const total=(t-c.currentTime)+notes.length*d;
+  pulse(total*1000);
+}
+function mdNew(){
+  md.q=mdGenerate(); md.checked=false; md.res=null;
+  md.ans = state.md.given ? [md.q.notes[0]] : [];
+  md.sel = md.ans.length-1;
+  $pc("mdPill").textContent=md.q.key.n+"‑Dur";
+  $pc("mdTitle").textContent=`Melodie mit ${md.q.notes.length} Tönen`;
+  $pc("mdHint").textContent= state.md.given ? `Der erste Ton ist vorgegeben (${midiLabel(md.q.key,md.q.notes[0])}).` : "Finde alle Töne selbst.";
+  $pc("mdFeedback").hidden=true; $pc("mdEditRow").hidden=false; $pc("mdDoneRow").hidden=true;
+  mdRender();
+  mdPlayNotes(md.q.notes, state.md.cadence);
+}
+
+/* --- Eingabe --- */
+function mdLocked(i){ return state.md.given && i===0; }
+function mdRender(){
+  mdInputUi();
+  const box=$pc("mdStaff");
+  if(!md.q){
+    box.innerHTML=staffSVG(MD_KEYS[0], [], {slots:state.md.len, caption:"Deine Melodie"});
+    $pc("mdPiano").innerHTML=piano(MD_LO, MD_HI, {tag:"button"});
+    return;
+  }
+  const staffMode=state.md.input==="staff" && !md.checked;
+  box.classList.toggle("edit", staffMode);
+  const notes=md.ans.map((m,i)=>({midi:m, cls: md.res ? md.res[i] : mdLocked(i) ? "given" : (staffMode && i===md.sel ? "sel" : "")}));
+  let html=staffSVG(md.q.key, notes, {slots:md.q.notes.length, sel: staffMode?md.sel:undefined,
+    next: md.checked?undefined:md.ans.length, caption:"Deine Melodie"});
+  if(md.checked) html+=staffSVG(md.q.key, md.q.notes.map((m,i)=>({midi:m, cls: md.res[i]==="ok"?"ok":"sol"})), {caption:"Lösung"});
+  box.innerHTML=html;
+  const last=md.ans[md.ans.length-1];
+  $pc("mdPiano").innerHTML=piano(MD_LO, MD_HI, {tag:"button", cls:m=> !md.checked && m===last ? "sel" : ""});
+}
+function mdAdd(midi){
+  if(!md.q || md.checked || md.ans.length>=md.q.notes.length) return;
+  md.ans.push(midi); md.sel=md.ans.length-1;
+  tone(midi, ac().currentTime+0.02, 0.8, 0.9);
+  mdRender();
+}
+$pc("mdPiano").addEventListener("click",e=>{
+  const k=e.target.closest("[data-m]"); if(!k) return;
+  if(!md.q){ tone(+k.dataset.m, ac().currentTime+0.02, 0.8, 0.9); return; }
+  mdAdd(+k.dataset.m);
+});
+$pc("mdStaff").addEventListener("pointerdown",e=>{
+  if(!md.q || md.checked || state.md.input!=="staff") return;
+  const svg=e.target.closest("svg"); if(!svg) return;
+  e.preventDefault();
+  const pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
+  const p=pt.matrixTransform(svg.getScreenCTM().inverse());
+  const key=md.q.key, x0=40+(key.sh||key.fl)*10;
+  let step=Math.round((Y_BASE-p.y)/HS)+2; step=Math.max(STEP_MIN,Math.min(STEP_MAX,step));
+  const slot=Math.floor((p.x-x0)/SLOT_W);
+  const midi=stepMidi(key,step);
+  if(slot>=0 && slot<md.ans.length){
+    md.sel=slot;
+    if(!mdLocked(slot)){ md.ans[slot]=midi; tone(midi, ac().currentTime+0.02, 0.8, 0.9); }
+    mdRender();
+  } else mdAdd(midi);
+});
+function mdMoveSel(dir){
+  if(!md.q || md.checked || md.sel<0 || mdLocked(md.sel)) return;
+  const key=md.q.key, {step}=spellInKey(key, md.ans[md.sel]);
+  const ns=Math.max(STEP_MIN,Math.min(STEP_MAX, step+dir));
+  md.ans[md.sel]=stepMidi(key,ns);
+  tone(md.ans[md.sel], ac().currentTime+0.02, 0.8, 0.9);
+  mdRender();
+}
+$pc("mdUp").onclick=()=>mdMoveSel(1);
+$pc("mdDown").onclick=()=>mdMoveSel(-1);
+$pc("mdPrev").onclick=()=>{ if(md.sel>0){ md.sel--; mdRender(); } };
+$pc("mdNextSel").onclick=()=>{ if(md.sel<md.ans.length-1){ md.sel++; mdRender(); } };
+$pc("mdUndo").onclick=()=>{
+  if(!md.q || md.checked) return;
+  if(md.ans.length > (state.md.given?1:0)){ md.ans.pop(); md.sel=md.ans.length-1; mdRender(); }
+};
+$pc("mdClear").onclick=()=>{
+  if(!md.q || md.checked) return;
+  md.ans = state.md.given ? [md.q.notes[0]] : []; md.sel=md.ans.length-1; $pc("mdFeedback").hidden=true; mdRender();
+};
+
+/* --- Prüfen --- */
+function mdCheck(){
+  if(!md.q || md.checked) return;
+  const n=md.q.notes.length;
+  if(md.ans.length<n){
+    feedbackBox($pc("mdFeedback"), false, `Noch ${n-md.ans.length} ${n-md.ans.length===1?"Ton fehlt":"Töne fehlen"}`, "<span>Gib erst alle Töne ein, dann prüfen.</span>");
+    return;
+  }
+  md.checked=true;
+  md.res=md.q.notes.map((m,i)=> md.ans[i]===m ? "ok" : "bad");
+  const counted=md.res.map((r,i)=>[r,i]).filter(([,i])=>!mdLocked(i));
+  const right=counted.filter(([r])=>r==="ok").length, ok=right===counted.length;
+  mdStat.add(ok);
+  const k=md.q.key, sol=md.q.notes.map(m=>midiLabel(k,m)).join(" – ");
+  const octOnly=md.q.notes.some((m,i)=>md.ans[i]!==m && (md.ans[i]-m)%12===0);
+  feedbackBox($pc("mdFeedback"), ok, ok ? "Richtig, alle Töne getroffen!" : `${right} von ${counted.length} Tönen richtig`,
+    `<span>Lösung: ${esc(sol)}</span>${octOnly?'<span class="hint">Mindestens ein Ton stimmt, liegt aber in der falschen Oktave.</span>':""}
+     <div class="legend"><span><i style="background:var(--good)"></i>richtig</span><span><i style="background:var(--bad)"></i>falsch</span><span><i style="background:var(--brass)"></i>richtiger Ton</span></div>`);
+  $pc("mdEditRow").hidden=true; $pc("mdDoneRow").hidden=false;
+  mdRender();
+}
+$pc("mdCheck").onclick=mdCheck;
+$pc("mdNew").onclick=mdNew;
+$pc("mdPlay").onclick=()=>{ if(!md.q || md.checked) mdNew(); else mdPlayNotes(md.q.notes, state.md.cadence); };
+$pc("mdAgain").onclick=()=>{ if(md.q) mdPlayNotes(md.q.notes, false); };
+$pc("mdMine").onclick=()=>{ if(md.q) mdPlayNotes(md.ans, false); };
+mdSettings(); mdRender();
+
 /* ---------- Tabs & keys ---------- */
 let view="quiz";
-const VIEWS=["quiz","explore","sing","hints","ctype","cnotes","ckey"], CHORD_VIEWS=["ctype","cnotes","ckey"];
-const lastIn={iv:"quiz", ch:"ctype"};
+const VIEWS=["quiz","explore","sing","hints","ctype","cnotes","ckey","mdict"], CHORD_VIEWS=["ctype","cnotes","ckey"];
+const lastIn={iv:"quiz", ch:"ctype", dk:"mdict"};
 function showView(v){
   view=v;
-  lastIn[CHORD_VIEWS.includes(v)?"ch":"iv"]=v;
+  lastIn[CHORD_VIEWS.includes(v)?"ch": v==="mdict"?"dk":"iv"]=v;
   document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.view===v));
   VIEWS.forEach(x=>document.getElementById("view-"+x).hidden = x!==v);
   document.getElementById("settings").hidden = !(v==="quiz" || v==="sing");
