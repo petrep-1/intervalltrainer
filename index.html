@@ -183,6 +183,38 @@ td.pc{width:42%}
 .switch input:checked{background:var(--accent)}
 .switch input:checked::after{transform:translateX(20px)}
 
+/* Singen: Tonerkennung */
+.micbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;border-radius:14px;min-height:56px;padding:12px 18px;
+  background:var(--accent);color:var(--accent-ink);font:700 17px var(--body);cursor:pointer;transition:background .15s,transform .12s}
+.micbtn svg{width:22px;height:22px;fill:currentColor}
+.micbtn:active{transform:scale(.98)}
+.micbtn[aria-pressed="true"]{background:var(--bad);color:#fff}
+.pitch{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);transition:background .2s,border-color .2s}
+.pitch[data-state="hit"]{background:var(--good-bg);border-color:var(--good)}
+.pitch[data-state="miss"]{background:var(--bad-bg);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.pitch-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.pitch-sung{display:flex;flex-direction:column;min-width:64px}
+.pitch-sung.r{text-align:right}
+.pitch-sung .lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pitch-sung b{font-family:var(--display);font-size:32px;line-height:1.1;font-variant-numeric:tabular-nums}
+.pitch-sung.r b{color:var(--brass)}
+.pitch-msg{text-align:center;font-weight:700;font-size:15px;line-height:1.3}
+.pitch[data-state="hit"] .pitch-msg{color:var(--good)}
+.pitch[data-state="miss"] .pitch-msg{color:var(--bad)}
+.meter{position:relative;height:40px;border-radius:10px;background:var(--surface);border:1px solid var(--line);overflow:hidden}
+.meter .zone{position:absolute;top:0;bottom:0;left:41.7%;width:16.6%;background:var(--good-bg);border-left:1px solid var(--good);border-right:1px solid var(--good)}
+.meter .mid{position:absolute;top:0;bottom:0;left:50%;width:2px;margin-left:-1px;background:var(--good)}
+.meter .needle{position:absolute;top:4px;bottom:4px;left:50%;width:6px;margin-left:-3px;border-radius:3px;background:var(--ink);opacity:0;transition:left .08s linear,opacity .15s}
+.meter.on .needle{opacity:1}
+.meter .tick{position:absolute;top:50%;transform:translateY(-50%);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;z-index:1}
+.meter .tick.l{left:8px} .meter .tick.r{right:8px}
+.hold{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.hold i{display:block;height:100%;width:0;background:var(--good);transition:width .08s linear}
+.sgfoot{display:flex;flex-direction:column}
+.sgfoot .switch + .switch{border-top:0;padding-top:4px}
+.sgscore{margin:0;font-size:13px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.sgscore:empty{display:none}
+
 /* Merkhilfen */
 .hrow{padding:16px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
 .hrow:first-child{padding-top:0}
@@ -326,12 +358,35 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
       </div>
     </div>
     <div class="notes" id="sgNotes">– → <span class="q">?</span></div>
+
+    <button class="micbtn" id="pcStart" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11z"/></svg>
+      <span id="pcStartText">Singen &amp; prüfen</span>
+    </button>
+
+    <div class="pitch" id="pcBox" data-state="idle" hidden>
+      <div class="pitch-top">
+        <div class="pitch-sung"><span class="lbl">Du singst</span><b id="pcNote">–</b></div>
+        <div class="pitch-msg" id="pcMsg">Hör den Startton …</div>
+        <div class="pitch-sung r"><span class="lbl">Ziel</span><b id="pcTarget">?</b></div>
+      </div>
+      <div class="meter" aria-hidden="true">
+        <span class="tick l">tiefer</span><span class="tick r">höher</span>
+        <i class="zone" id="pcZone"></i><i class="mid"></i><i class="needle" id="pcNeedle"></i>
+      </div>
+      <div class="hold" aria-hidden="true"><i id="pcHold"></i></div>
+    </div>
+
     <div id="sgKb" hidden></div>
-    <label class="switch" for="sgHintsToggle">Merkhilfe anzeigen <input type="checkbox" id="sgHintsToggle" checked></label>
+    <div class="sgfoot">
+      <label class="switch" for="sgHintsToggle">Merkhilfe anzeigen <input type="checkbox" id="sgHintsToggle" checked></label>
+      <label class="switch" for="pcStrict">Strenge Prüfung (±25 statt ±50 Cent) <input type="checkbox" id="pcStrict"></label>
+    </div>
     <div class="btnrow">
-      <button class="btn" id="sgCheck">Zielton anhören</button>
+      <button class="btn ghost" id="sgCheck">Zielton anhören</button>
       <button class="btn ghost" id="sgNew">Neue Aufgabe</button>
     </div>
+    <p class="sgscore" id="sgScore"></p>
   </section>
 
   <!-- MERKHILFEN -->
@@ -635,6 +690,8 @@ function newSing(){
   document.getElementById("sgTask").textContent=`${ivBy(semis).name} ${dir==="up"?"aufwärts":"abwärts"}`;
   document.getElementById("sgNotes").innerHTML=`${nameOf(root)} ${dir==="up"?"↗":"↘"} <span class="q">?</span>`;
   document.getElementById("sgKb").hidden=true;
+  if(typeof pcStop==="function") pcStop(true);
+  document.getElementById("pcBox").hidden=true;
   sgHintText();
 }
 function sgHintText(){
@@ -651,12 +708,175 @@ function playRoot(){ tone(sg.root, ac().currentTime+0.05, 1.6); pulse(1600); }
 document.getElementById("sgPlay").onclick=()=>{ if(!sg) newSing(); playRoot(); };
 document.getElementById("sgCheck").onclick=()=>{
   if(!sg) newSing();
+  if(pc.on){ pcStop(); document.getElementById("pcBox").hidden=true; }
   const target = sg.dir==="up" ? sg.root+sg.semis : sg.root-sg.semis;
   const t=ac().currentTime+0.05; tone(sg.root,t); tone(target,t+0.75,1.6); pulse(2400);
   document.getElementById("sgNotes").innerHTML=`${nameOf(sg.root)} ${sg.dir==="up"?"↗":"↘"} <span class="q">${nameOf(target)}</span>`;
   const kb=document.getElementById("sgKb"); kb.innerHTML=keyboard(sg.root,target); kb.hidden=false;
 };
 document.getElementById("sgNew").onclick=()=>{ newSing(); playRoot(); };
+
+/* ---------- Singen: Ton über das Mikrofon erkennen ----------
+   Tonhöhe per Autokorrelation. Verglichen wird nur der Tonname, die Oktave
+   ist egal – so passt es für hohe und tiefe Stimmen. Der Ton muss kurz
+   gehalten werden (Balken), damit ein zufälliges Vorbeirutschen nicht zählt. */
+const pc = {on:false, stream:null, src:null, an:null, buf:null, raf:0, timers:[], ignoreUntil:0,
+            hold:0, last:0, hist:[], best:null, rootTime:0};
+let sgHits=0, sgTries=0;
+if(state.pitchStrict === undefined) state.pitchStrict = false;
+const pcStrictEl=document.getElementById("pcStrict");
+pcStrictEl.checked=state.pitchStrict;
+pcStrictEl.onchange=()=>{ state.pitchStrict=pcStrictEl.checked; save(); pcZone(); };
+function pcTol(){ return state.pitchStrict ? 25 : 50; }
+const PC_RANGE = 300;   // Anzeige ±300 Cent (3 Halbtöne)
+function pcZone(){
+  const w = pcTol()/PC_RANGE*50;
+  const z=document.getElementById("pcZone"); z.style.left=(50-w)+"%"; z.style.width=(2*w)+"%";
+}
+pcZone();
+const $pc=id=>document.getElementById(id);
+function pcTarget(){ return sg.dir==="up" ? sg.root+sg.semis : sg.root-sg.semis; }
+
+function detectPitch(buf, sr){
+  const n=buf.length;
+  let rms=0; for(let i=0;i<n;i++) rms+=buf[i]*buf[i];
+  rms=Math.sqrt(rms/n);
+  if(rms<0.012) return -1;                         // zu leise
+  const minLag=Math.floor(sr/1100), maxLag=Math.min(Math.floor(sr/65), n-1);
+  const c=new Float32Array(maxLag+2);
+  for(let lag=0;lag<=maxLag+1;lag++){
+    let s=0; for(let j=0;j<n-lag;j++) s+=buf[j]*buf[j+lag];
+    c[lag]=s;
+  }
+  let d=minLag; while(d<maxLag && c[d]>c[d+1]) d++;   // erstes Tal überspringen
+  let best=-1, bestLag=-1;
+  for(let lag=d;lag<=maxLag;lag++) if(c[lag]>best){ best=c[lag]; bestLag=lag; }
+  if(bestLag<1 || best/c[0] < 0.45) return -1;     // kein klarer Ton
+  const x1=c[bestLag-1], x2=c[bestLag], x3=c[bestLag+1];
+  const a=(x1+x3-2*x2)/2, b=(x3-x1)/2;
+  const T = a ? bestLag - b/(2*a) : bestLag;
+  return sr/T;
+}
+const midiOf = f => 69 + 12*Math.log2(f/440);
+function centsOff(midiF, target){                   // Abweichung zum Zielton, oktavunabhängig
+  let d = ((midiF - target)*100) % 1200;
+  if(d>600) d-=1200; if(d<-600) d+=1200;
+  return d;
+}
+
+function pcMsg(text, st){ $pc("pcMsg").textContent=text; if(st) $pc("pcBox").dataset.state=st; }
+function pcClear(){ pc.timers.forEach(clearTimeout); pc.timers=[]; }
+function pcUi(on){
+  $pc("pcStart").setAttribute("aria-pressed", on);
+  $pc("pcStartText").textContent = on ? "Abbrechen" : "Singen & prüfen";
+}
+
+async function pcStart(){
+  if(!sg) newSing();
+  if(pc.on){ pcStop(); pcMsg("Abgebrochen","idle"); return; }
+  const c = ac();                                  // im Klick: Audio freischalten
+  const box=$pc("pcBox"); box.hidden=false; box.dataset.state="listen";
+  $pc("pcTarget").textContent = "?";
+  $pc("pcNote").textContent="–"; $pc("pcHold").style.width="0";
+  $pc("sgKb").hidden=true;
+  document.getElementById("sgNotes").innerHTML=`${nameOf(sg.root)} ${sg.dir==="up"?"↗":"↘"} <span class="q">?</span>`;
+  if(!navigator.mediaDevices?.getUserMedia){
+    pcMsg(location.protocol==="file:" || !window.isSecureContext
+      ? "Mikrofon geht nur, wenn die Seite über https geöffnet ist (z. B. GitHub Pages)."
+      : "Dieser Browser erlaubt hier keinen Mikrofonzugriff.","miss");
+    return;
+  }
+  pc.on=true; pcUi(true);
+  setAudioSession("play-and-record");
+  pcMsg("Mikrofon wird geöffnet …","listen");
+  try{
+    pc.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}});
+  }catch(err){
+    pc.on=false; pcUi(false); setAudioSession("playback");
+    const inClaude = (()=>{ try{ return window.top!==window.self; }catch(e){ return true; } })();
+    pcMsg(err && err.name==="NotFoundError" ? "Kein Mikrofon gefunden."
+      : inClaude ? "In dieser Ansicht ist das Mikrofon gesperrt. Nutze die Seite über GitHub Pages."
+      : "Kein Zugriff aufs Mikrofon. Erlaube es in den Website-Einstellungen des Browsers und lade die Seite neu.","miss");
+    return;
+  }
+  if(!pc.on){ pcRelease(); return; }               // inzwischen abgebrochen
+  const ctx2 = ac();
+  try{ await ctx2.resume(); }catch(e){}
+  pc.src = ctx2.createMediaStreamSource(pc.stream);
+  pc.an = ctx2.createAnalyser(); pc.an.fftSize = 2048;
+  pc.buf = new Float32Array(pc.an.fftSize);
+  pc.src.connect(pc.an);                           // nicht an die Lautsprecher
+  pc.hold=0; pc.hist=[]; pc.best=null; pc.last=performance.now();
+  // Startton vorspielen, solange nicht auswerten
+  tone(sg.root, ctx2.currentTime+0.05, 1.4); pulse(1500);
+  pc.ignoreUntil = performance.now()+1650;
+  pcMsg("Hör den Startton …","listen");
+  pc.timers.push(setTimeout(()=>{ if(pc.on) pcMsg("Jetzt den Zielton singen und halten","listen"); }, 1650));
+  pc.timers.push(setTimeout(()=>{ if(pc.on) pcResult(false); }, 1650+12000));
+  pcLoop();
+}
+
+function pcLoop(){
+  if(!pc.on) return;
+  pc.raf = requestAnimationFrame(pcLoop);
+  const now=performance.now(), dt=Math.min(100, now-pc.last); pc.last=now;
+  if(now < pc.ignoreUntil) return;
+  pc.an.getFloatTimeDomainData(pc.buf);
+  const f = detectPitch(pc.buf, pc.an.context.sampleRate);
+  const meter=document.querySelector("#pcBox .meter");
+  if(f<0){ pc.hist=[]; pc.hold=Math.max(0,pc.hold-dt*0.5); meter.classList.remove("on"); pcHoldUi(); return; }
+  pc.hist.push(midiOf(f)); if(pc.hist.length>5) pc.hist.shift();
+  const m=[...pc.hist].sort((a,b)=>a-b)[pc.hist.length>>1];   // Median glättet Ausreißer
+  const target=pcTarget(), off=centsOff(m, target);
+  $pc("pcNote").textContent = nameOf(Math.round(m));
+  const pos = 50 + Math.max(-1,Math.min(1, off/PC_RANGE))*50;
+  $pc("pcNeedle").style.left = pos+"%"; meter.classList.add("on");
+  if(!pc.best || Math.abs(off) < Math.abs(pc.best.off)) pc.best={off, note:Math.round(m)};
+  if(Math.abs(off) <= pcTol()){
+    pc.hold += dt;
+    pcMsg("Genau so – halten!","listen");
+    if(pc.hold >= 700) return pcResult(true);
+  } else {
+    pc.hold = Math.max(0, pc.hold - dt*1.5);
+    const rootOff = centsOff(m, sg.root);
+    if(Math.abs(rootOff) <= 50 && sg.semis%12) pcMsg("Das ist noch der Startton","listen");
+    else pcMsg(off<0 ? "Etwas höher" : "Etwas tiefer","listen");
+  }
+  pcHoldUi();
+}
+function pcHoldUi(){ $pc("pcHold").style.width = Math.min(100, pc.hold/700*100)+"%"; }
+
+function pcRelease(){
+  cancelAnimationFrame(pc.raf);
+  try{ pc.src && pc.src.disconnect(); }catch(e){}
+  if(pc.stream) pc.stream.getTracks().forEach(t=>t.stop());
+  pc.stream=null; pc.src=null; pc.an=null;
+  setAudioSession("playback");
+}
+function pcStop(silent){
+  pcClear();
+  const was=pc.on; pc.on=false;
+  if(was || pc.stream) pcRelease();
+  pcUi(false);
+  if(!silent && was) $pc("pcBox").dataset.state="idle";
+}
+function pcResult(ok){
+  pcStop(true);
+  sgTries++; if(ok) sgHits++;
+  const target=pcTarget();
+  $pc("pcTarget").textContent=nameOf(target);
+  $pc("pcHold").style.width = ok ? "100%" : "0";
+  if(ok) pcMsg(`Getroffen! ${ivBy(sg.semis).name} ${sg.dir==="up"?"aufwärts":"abwärts"}`,"hit");
+  else if(pc.best) pcMsg(`Nicht getroffen – am nächsten warst du bei ${nameOf(pc.best.note)} (${pc.best.off>0?"+":""}${Math.round(pc.best.off)} Cent)`,"miss");
+  else pcMsg("Kein Ton erkannt – sing etwas lauter oder näher am Mikrofon","miss");
+  document.getElementById("sgNotes").innerHTML=`${nameOf(sg.root)} ${sg.dir==="up"?"↗":"↘"} <span class="q">${nameOf(target)}</span>`;
+  const kb=$pc("sgKb"); kb.innerHTML=keyboard(sg.root,target); kb.hidden=false;
+  $pc("sgScore").textContent = `Diese Sitzung: ${sgHits} von ${sgTries} getroffen`;
+  // zum Vergleich Start- und Zielton vorspielen
+  setTimeout(()=>{ const c=ac(), t=c.currentTime+0.05; tone(sg.root,t); tone(target,t+0.75,1.6); pulse(2400); }, 350);
+}
+$pc("pcStart").onclick=pcStart;
+document.addEventListener("visibilitychange",()=>{ if(document.hidden && pc.on){ pcStop(); pcMsg("Pausiert – Seite war im Hintergrund","idle"); } });
 
 /* ---------- Merkhilfen ---------- */
 function esc(t){ return String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -708,6 +928,7 @@ document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
   ["quiz","explore","sing","hints"].forEach(v=>document.getElementById("view-"+v).hidden = v!==view);
   document.getElementById("settings").hidden = view==="explore" || view==="hints";
   if(view==="sing" && !sg) newSing();
+  if(view!=="sing" && pc.on) pcStop();
 });
 document.addEventListener("keydown",e=>{
   if(view!=="quiz" || e.target.closest("button.tab, summary, input, select, .chip")) return;
