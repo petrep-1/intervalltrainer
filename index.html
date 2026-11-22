@@ -146,7 +146,9 @@ h1 span{color:var(--brass)}
 
 /* Statistik */
 .statblock{display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--line);padding-top:18px}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.stat.q b{color:var(--accent)}
+.stat span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stat{text-align:center;background:var(--surface-2);border-radius:12px;padding:10px 6px}
 .stat b{display:block;font-family:var(--display);font-size:28px;font-variant-numeric:tabular-nums;line-height:1.1}
 .stat span{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
@@ -257,7 +259,9 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
   .ans span{font-size:15px}
   .btnrow .btn{flex:1 1 auto}
   .chip{padding:9px 13px;min-height:40px}
-  .stat b{font-size:24px}
+  .stat b{font-size:22px}
+  .stat{padding:10px 4px}
+  .stat span{font-size:10px;letter-spacing:.03em}
   .erow{grid-template-columns:1fr;gap:9px}
   .mini button{flex:1;height:44px}
   .dirs{grid-template-columns:1fr}
@@ -321,6 +325,7 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
         <div class="stat"><b id="sRight">0</b><span>richtig</span></div>
         <div class="stat"><b id="sTotal">0</b><span>gesamt</span></div>
         <div class="stat"><b id="sStreak">0</b><span>Serie</span></div>
+        <div class="stat q"><b id="sQuote">–</b><span>Quote</span></div>
       </div>
       <p class="label" style="margin:6px 0 0">Trefferquote je Intervall</p>
       <div class="tablewrap">
@@ -386,7 +391,23 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
       <button class="btn ghost" id="sgCheck">Zielton anhören</button>
       <button class="btn ghost" id="sgNew">Neue Aufgabe</button>
     </div>
-    <p class="sgscore" id="sgScore"></p>
+    <div class="statblock">
+      <p class="label" style="margin:0">Diese Sitzung</p>
+      <div class="stats">
+        <div class="stat"><b id="sgRight">0</b><span>getroffen</span></div>
+        <div class="stat"><b id="sgTotal">0</b><span>versucht</span></div>
+        <div class="stat"><b id="sgStreak">0</b><span>Serie</span></div>
+        <div class="stat q"><b id="sgQuote">–</b><span>Quote</span></div>
+      </div>
+      <p class="label" style="margin:6px 0 0">Trefferquote je Intervall</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Intervall</th><th class="r">Treffer</th><th>Quote</th></tr></thead>
+          <tbody id="sgTable"></tbody>
+        </table>
+      </div>
+      <div class="btnrow"><button class="btn ghost" id="sgReset">Sitzung zurücksetzen</button></div>
+    </div>
   </section>
 
   <!-- MERKHILFEN -->
@@ -623,6 +644,7 @@ function updateStats(){
   document.getElementById("sRight").textContent=right;
   document.getElementById("sTotal").textContent=total;
   document.getElementById("sStreak").textContent=streak;
+  document.getElementById("sQuote").textContent = total ? Math.round(right/total*100)+"\u202f%" : "–";
   const tb=document.getElementById("statTable"); tb.innerHTML="";
   const keys = IV.filter(i=>stats[i.s]?.t).map(i=>i.s);
   if(!keys.length){ tb.innerHTML=`<tr><td colspan="3" class="hint">Noch keine Antworten. Die Quote pro Intervall erscheint hier.</td></tr>`; return; }
@@ -871,11 +893,32 @@ function pcResult(ok){
   else pcMsg("Kein Ton erkannt – sing etwas lauter oder näher am Mikrofon","miss");
   document.getElementById("sgNotes").innerHTML=`${nameOf(sg.root)} ${sg.dir==="up"?"↗":"↘"} <span class="q">${nameOf(target)}</span>`;
   const kb=$pc("sgKb"); kb.innerHTML=keyboard(sg.root,target); kb.hidden=false;
-  $pc("sgScore").textContent = `Diese Sitzung: ${sgHits} von ${sgTries} getroffen`;
+  const key = sg.semis+"-"+sg.dir, st = sgStats[key] || (sgStats[key]={r:0,t:0});
+  st.t++; if(ok){ st.r++; sgStreak++; } else sgStreak=0;
+  sgUpdateStats();
   // zum Vergleich Start- und Zielton vorspielen
   setTimeout(()=>{ const c=ac(), t=c.currentTime+0.05; tone(sg.root,t); tone(target,t+0.75,1.6); pulse(2400); }, 350);
 }
 $pc("pcStart").onclick=pcStart;
+
+/* Statistik Singen – nur für die aktuelle Sitzung, getrennt nach Richtung */
+let sgStats = {}, sgStreak = 0;
+function sgUpdateStats(){
+  $pc("sgRight").textContent=sgHits;
+  $pc("sgTotal").textContent=sgTries;
+  $pc("sgStreak").textContent=sgStreak;
+  $pc("sgQuote").textContent = sgTries ? Math.round(sgHits/sgTries*100)+"\u202f%" : "–";
+  const tb=$pc("sgTable"); tb.innerHTML="";
+  const rows=[];
+  IV.forEach(i=>["up","down"].forEach(d=>{ const st=sgStats[i.s+"-"+d]; if(st?.t) rows.push([i,d,st]); }));
+  if(!rows.length){ tb.innerHTML=`<tr><td colspan="3" class="hint">Noch nichts gesungen. Tippe auf „Singen &amp; prüfen“.</td></tr>`; return; }
+  rows.forEach(([i,d,st])=>{
+    const p=Math.round(st.r/st.t*100), cls = p>=80 ? "" : p>=50 ? " mid" : " low";
+    tb.insertAdjacentHTML("beforeend",`<tr><td>${i.name} ${d==="up"?"↑":"↓"}</td><td class="r">${st.r}/${st.t}</td><td class="pc"><div class="bar${cls}"><div><i style="width:${p}%"></i></div><small>${p} %</small></div></td></tr>`);
+  });
+}
+$pc("sgReset").onclick=()=>{ sgStats={}; sgHits=sgTries=sgStreak=0; sgUpdateStats(); };
+sgUpdateStats();
 document.addEventListener("visibilitychange",()=>{ if(document.hidden && pc.on){ pcStop(); pcMsg("Pausiert – Seite war im Hintergrund","idle"); } });
 
 /* ---------- Merkhilfen ---------- */
