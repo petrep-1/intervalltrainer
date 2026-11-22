@@ -131,7 +131,7 @@ h1 span{color:var(--brass)}
 .kb .b{height:58%;background:var(--key-b);border-radius:0 0 4px 4px;z-index:2;color:#fff;padding-bottom:3px;font-size:9px}
 .kb .a{background:var(--accent);color:var(--accent-ink)}
 .kb .z{background:var(--brass);color:#1a1205}
-.kb .w:not(.a):not(.z) em,.kb .b:not(.a):not(.z) em{display:none}
+.kb:not(.labels) :is(.w,.b):not(.a):not(.z):not(.sel):not(.ok):not(.bad):not(.miss) em{display:none}
 .kb em{font-style:normal}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -217,6 +217,42 @@ td.pc{width:42%}
 .sgscore{margin:0;font-size:13px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
 .sgscore:empty{display:none}
 
+/* Navigation: Bereich + Tabs */
+.nav{display:flex;flex-direction:column;gap:8px}
+.sect{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:12px;background:color-mix(in srgb,var(--accent) 9%,var(--bg));border:1px solid var(--line)}
+.sectbtn{border:0;background:transparent;color:var(--muted);font:700 15px var(--display);padding:8px;border-radius:9px;cursor:pointer;transition:background .15s,color .15s}
+.sectbtn:hover{color:var(--ink)}
+.sectbtn[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.tabs.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+/* Akkorde */
+.subset{box-shadow:none;background:var(--surface-2)}
+.intro.center{text-align:center;margin:-8px auto 0}
+.chordsym{font-family:var(--display);font-weight:800;font-size:60px;line-height:1;letter-spacing:-.02em;text-align:center;padding:6px 0 0}
+.kb.piano{height:150px;user-select:none;-webkit-user-select:none}
+.kb button.w,.kb button.b{border:0;cursor:pointer;font:inherit;padding-left:0;padding-right:0;touch-action:manipulation}
+.kb button.w{border-right:1px solid var(--key-edge);font-weight:700;font-size:11px}
+.kb button.w:hover:not(.sel):not(.ok):not(.bad):not(.miss){background:color-mix(in srgb,var(--accent) 10%,var(--key-w))}
+.kb button:focus-visible{outline:3px solid var(--brass);outline-offset:-3px;z-index:3}
+.kb .sel{background:var(--accent);color:var(--accent-ink)}
+.kb .ok{background:var(--good);color:#fff}
+.kb .bad{background:var(--bad);color:#fff}
+.kb .w.miss{background:var(--brass-soft);box-shadow:inset 0 0 0 3px var(--brass);color:var(--key-label)}
+.kb .b.miss{background:var(--brass);color:#1a1205}
+.chordlist{display:flex;flex-wrap:wrap;gap:10px}
+.chordlist span{font-family:var(--display);font-weight:800;font-size:30px;line-height:1;padding:12px 18px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);min-width:72px;text-align:center}
+.kb.piano .b{font-size:9px;letter-spacing:-.03em}
+.kb.piano .b em{white-space:nowrap}
+.keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.keybtn{border:1.5px solid var(--line);background:var(--surface-2);color:var(--ink);font:700 15px var(--body);padding:10px 4px;border-radius:12px;cursor:pointer;min-height:48px;transition:border-color .12s,background .12s}
+.keybtn:hover:not(:disabled){border-color:var(--accent)}
+.keybtn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.keybtn.ok{border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.keybtn.bad{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+.keybtn.miss{border-color:var(--brass);border-style:dashed;color:var(--brass)}
+.keybtn:disabled{cursor:default}
+.analysis{margin:4px 0 0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:3px}
+
 /* Merkhilfen */
 .hrow{padding:16px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
 .hrow:first-child{padding-top:0}
@@ -247,7 +283,11 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
   .staff i:nth-child(1){left:30px} .staff i:nth-child(2){left:62px}
   .staff b{left:30px;right:22px}
   .sub{font-size:13px}
-  .tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+  .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:4px;margin-block:-4px;gap:6px}
+  .sectbtn{padding:7px;font-size:14px}
+  .kb.piano{height:124px}
+  .chordsym{font-size:50px}
+  .chordlist span{font-size:26px;padding:10px 14px;min-width:60px}
   .tab{padding:12px 2px;font-size:13.5px}
   .card{padding:18px 16px;gap:18px;border-radius:18px}
   .playrow{gap:16px}
@@ -282,12 +322,23 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
     <div class="staff" aria-hidden="true"><i></i><i></i><b></b></div>
   </header>
 
-  <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="tab-quiz" aria-selected="true" data-view="quiz">Quiz</button>
-    <button class="tab" role="tab" id="tab-explore" aria-selected="false" data-view="explore">Anhören</button>
-    <button class="tab" role="tab" id="tab-sing" aria-selected="false" data-view="sing">Singen</button>
-    <button class="tab" role="tab" id="tab-hints" aria-selected="false" data-view="hints">Merkhilfen</button>
-  </div>
+  <nav class="nav">
+    <div class="sect" role="tablist" aria-label="Bereich">
+      <button class="sectbtn" role="tab" id="sect-iv" data-sect="iv" aria-selected="true">Intervalle</button>
+      <button class="sectbtn" role="tab" id="sect-ch" data-sect="ch" aria-selected="false">Akkorde</button>
+    </div>
+    <div class="tabs" role="tablist" id="tabsIv">
+      <button class="tab" role="tab" id="tab-quiz" aria-selected="true" data-view="quiz">Quiz</button>
+      <button class="tab" role="tab" id="tab-explore" aria-selected="false" data-view="explore">Anhören</button>
+      <button class="tab" role="tab" id="tab-sing" aria-selected="false" data-view="sing">Singen</button>
+      <button class="tab" role="tab" id="tab-hints" aria-selected="false" data-view="hints">Merkhilfen</button>
+    </div>
+    <div class="tabs three" role="tablist" id="tabsCh" hidden>
+      <button class="tab" role="tab" id="tab-ctype" aria-selected="false" data-view="ctype">Akkord hören</button>
+      <button class="tab" role="tab" id="tab-cnotes" aria-selected="false" data-view="cnotes">Akkordtöne</button>
+      <button class="tab" role="tab" id="tab-ckey" aria-selected="false" data-view="ckey">Tonart</button>
+    </div>
+  </nav>
 
   <details class="setbox" id="settings">
     <summary><b>Einstellungen</b><span id="setSummary"></span></summary>
@@ -417,6 +468,83 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
     <div class="btnrow"><button class="btn ghost" id="hintReset">Auf Standard zurücksetzen</button></div>
   </section>
 
+  <!-- AKKORD HÖREN -->
+  <section id="view-ctype" class="card" hidden>
+    <details class="setbox subset">
+      <summary><b>Einstellungen</b><span id="ctSum"></span></summary>
+      <section class="settings">
+        <div><p class="label">Akkordtypen</p><div class="chips" id="ctTypes"></div></div>
+        <div><p class="label">Wiedergabe</p><div class="chips" id="ctPlayMode"></div></div>
+        <div><p class="label">Lage</p><div class="chips" id="ctInv"></div></div>
+      </section>
+    </details>
+    <div class="playrow">
+      <button class="play" id="ctPlay" aria-label="Akkord abspielen"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      <div class="playinfo">
+        <span class="pill" id="ctPill">Akkord</span>
+        <div class="mode-tag" id="ctTitle">Bereit?</div>
+        <div class="hint" id="ctHint">Tippe auf Play und bestimme, welcher Akkordtyp erklingt.</div>
+      </div>
+    </div>
+    <div class="answers" id="ctAnswers"></div>
+    <div id="ctFeedback" hidden></div>
+    <div class="btnrow">
+      <button class="btn" id="ctNext" hidden>Nächster Akkord</button>
+      <button class="btn ghost" id="ctReplay" hidden>Nochmal hören</button>
+    </div>
+    <div class="statblock" id="ctStats"></div>
+  </section>
+
+  <!-- AKKORDTÖNE -->
+  <section id="view-cnotes" class="card" hidden>
+    <details class="setbox subset">
+      <summary><b>Einstellungen</b><span id="cnSum"></span></summary>
+      <section class="settings">
+        <div><p class="label">Akkordtypen</p><div class="chips" id="cnTypes"></div></div>
+        <div><p class="label">Grundtöne</p><div class="chips" id="cnRoots"></div></div>
+        <div><p class="label">Tastennamen</p><div class="chips" id="cnLabels"></div></div>
+      </section>
+    </details>
+    <div class="chordsym" id="cnSym">–</div>
+    <p class="intro center" id="cnIntro">Tippe alle Töne dieses Akkords an. Die Oktave ist egal.</p>
+    <div class="kb piano" id="cnPiano"></div>
+    <div id="cnFeedback" hidden></div>
+    <div class="btnrow">
+      <button class="btn" id="cnCheck">Prüfen</button>
+      <button class="btn ghost" id="cnClear">Auswahl löschen</button>
+      <button class="btn" id="cnNext" hidden>Nächster Akkord</button>
+      <button class="btn ghost" id="cnListen" hidden>Akkord anhören</button>
+    </div>
+    <div class="statblock" id="cnStats"></div>
+  </section>
+
+  <!-- TONART -->
+  <section id="view-ckey" class="card" hidden>
+    <details class="setbox subset">
+      <summary><b>Einstellungen</b><span id="ckSum"></span></summary>
+      <section class="settings">
+        <div><p class="label">Tonarten, aus denen Aufgaben kommen</p><div class="chips" id="ckPool"></div></div>
+        <div><p class="label">Stufen</p><div class="chips" id="ckDeg"></div></div>
+        <div><p class="label">Anzahl Akkorde</p><div class="chips" id="ckN"></div></div>
+      </section>
+    </details>
+    <div>
+      <p class="label">Diese Akkorde kommen vor</p>
+      <div class="chordlist" id="ckChords"></div>
+    </div>
+    <div class="btnrow"><button class="btn ghost" id="ckPlay">Akkorde anhören</button></div>
+    <div>
+      <p class="label">In welchen Dur-Tonarten sind alle leitereigen? Mehrere möglich</p>
+      <div class="keys" id="ckKeys"></div>
+    </div>
+    <div id="ckFeedback" hidden></div>
+    <div class="btnrow">
+      <button class="btn" id="ckCheck">Prüfen</button>
+      <button class="btn" id="ckNext" hidden>Neue Aufgabe</button>
+    </div>
+    <div class="statblock" id="ckStats"></div>
+  </section>
+
   <footer>Tastatur im Quiz: <kbd>Leertaste</kbd> abspielen · <kbd>1</kbd>–<kbd>0</kbd> antworten · <kbd>Enter</kbd> weiter</footer>
 </div>
 
@@ -509,7 +637,7 @@ function ac(){
 document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && ctx) ctxStale = true; });
 window.addEventListener("pageshow", e=>{ if(e.persisted && ctx) ctxStale = true; });
 const freq = m => 440*Math.pow(2,(m-69)/12);
-function tone(midi, t0, dur=1.3){
+function tone(midi, t0, dur=1.3, vol=1){
   const c = ac(), f = freq(midi);
   const out = c.createGain(); out.gain.value = 0.0001;
   const filt = c.createBiquadFilter(); filt.type="lowpass"; filt.frequency.value = Math.min(6000, f*8);
@@ -525,8 +653,8 @@ function tone(midi, t0, dur=1.3){
     o.start(t0); o.stop(t0+dur+.1);
   });
   out.gain.setValueAtTime(0.0001,t0);
-  out.gain.exponentialRampToValueAtTime(0.32,t0+0.012);
-  out.gain.exponentialRampToValueAtTime(0.12,t0+0.35);
+  out.gain.exponentialRampToValueAtTime(0.32*vol,t0+0.012);
+  out.gain.exponentialRampToValueAtTime(0.12*vol,t0+0.35);
   out.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
 }
 function playInterval(root, semis, mode){
@@ -963,15 +1091,379 @@ function hintsChanged(){
 }
 document.getElementById("hintReset").onclick=()=>{ state.hintPick={}; hintsChanged(); };
 
+/* =====================================================================
+   AKKORDE
+   ===================================================================== */
+
+/* --- Notennamen richtig schreiben (deutsch: H, B = Hb, Es, As, Fis …) --- */
+const LET=["C","D","E","F","G","A","H"], LETPC=[0,2,4,5,7,9,11];
+function spellName(l, acc){
+  const b=LET[((l%7)+7)%7];
+  if(acc>0) return b+"is".repeat(acc);
+  if(acc<0){
+    if(b==="H") return acc===-1 ? "B" : "Heses";
+    if(b==="E"||b==="A") return b+"s"+"es".repeat(-acc-1);
+    return b+"es".repeat(-acc);
+  }
+  return b;
+}
+// Ton im Abstand "semis" Halbtöne, der als "deg"-te Stufe über dem Grundton geschrieben wird
+function spellInt(rootL, rootA, semis, deg){
+  const l=rootL+deg-1;
+  const target=LETPC[rootL]+rootA+semis;
+  const letterPc=LETPC[((l%7)+7)%7];
+  let acc=((target-letterPc)%12+12)%12; if(acc>6) acc-=12;
+  return spellName(l, acc);
+}
+const ROOTS=[{n:"C",l:0,a:0},{n:"Des",l:1,a:-1},{n:"D",l:1,a:0},{n:"Es",l:2,a:-1},{n:"E",l:2,a:0},{n:"F",l:3,a:0},
+  {n:"Fis",l:3,a:1},{n:"G",l:4,a:0},{n:"As",l:5,a:-1},{n:"A",l:5,a:0},{n:"B",l:6,a:-1},{n:"H",l:6,a:0}];
+ROOTS.forEach(r=>r.pc=((LETPC[r.l]+r.a)%12+12)%12);
+
+/* --- Akkordtypen: [Halbtöne über dem Grundton, Stufe] --- */
+const CH=[
+  {id:"maj",  sym:"",      name:"Dur",              f:[[0,1],[4,3],[7,5]], ear:1},
+  {id:"min",  sym:"m",     name:"Moll",             f:[[0,1],[3,3],[7,5]], ear:1},
+  {id:"aug",  sym:"aug",   name:"übermäßig",        f:[[0,1],[4,3],[8,5]], ear:1},
+  {id:"dim",  sym:"dim",   name:"vermindert",       f:[[0,1],[3,3],[6,5]], ear:1},
+  {id:"sus2", sym:"sus2",  name:"sus2",             f:[[0,1],[2,2],[7,5]], ear:1},
+  {id:"sus4", sym:"sus4",  name:"sus4",             f:[[0,1],[5,4],[7,5]], ear:1},
+  {id:"6",    sym:"6",     name:"Dur 6",            f:[[0,1],[4,3],[7,5],[9,6]]},
+  {id:"m6",   sym:"m6",    name:"Moll 6",           f:[[0,1],[3,3],[7,5],[9,6]]},
+  {id:"7",    sym:"7",     name:"Dominantsept (7)", f:[[0,1],[4,3],[7,5],[10,7]], ear:1},
+  {id:"maj7", sym:"maj7",  name:"Dur maj7",         f:[[0,1],[4,3],[7,5],[11,7]], ear:1},
+  {id:"m7",   sym:"m7",    name:"Moll 7",           f:[[0,1],[3,3],[7,5],[10,7]], ear:1},
+  {id:"m7b5", sym:"m7♭5",  name:"halbvermindert",   f:[[0,1],[3,3],[6,5],[10,7]], ear:1},
+  {id:"dim7", sym:"dim7",  name:"vermindert 7",     f:[[0,1],[3,3],[6,5],[9,7]], ear:1},
+  {id:"add9", sym:"add9",  name:"add9",             f:[[0,1],[4,3],[7,5],[14,9]]},
+  {id:"9",    sym:"9",     name:"Dur 9",            f:[[0,1],[4,3],[7,5],[10,7],[14,9]]},
+  {id:"m9",   sym:"m9",    name:"Moll 9",           f:[[0,1],[3,3],[7,5],[10,7],[14,9]]},
+  {id:"maj9", sym:"maj9",  name:"Dur maj9",         f:[[0,1],[4,3],[7,5],[11,7],[14,9]]}
+];
+const CHBY=Object.fromEntries(CH.map(c=>[c.id,c]));
+
+/* --- Einstellungen --- */
+if(!state.ch) state.ch={};
+const CHD={earTypes:["maj","min","aug","dim"], earPlay:"both", earInv:false,
+           noteTypes:["maj","min","7","m7","sus4"], noteRoots:"all", noteLabels:false,
+           keyPool:["C","G","D","F"], keyDeg:[0,1,3,4], keyN:3};
+for(const k in CHD) if(state.ch[k]===undefined) state.ch[k]=Array.isArray(CHD[k])?[...CHD[k]]:CHD[k];
+function toggleKeep(arr, v, order){
+  const i=arr.indexOf(v);
+  if(i>=0){ if(arr.length>1) arr.splice(i,1); }
+  else { arr.push(v); if(order) arr.sort((a,b)=>order.indexOf(a)-order.indexOf(b)); }
+}
+function chipGroup(el, opts, isOn, onPick){
+  el.innerHTML="";
+  opts.forEach(o=>{
+    const b=document.createElement("button"); b.className="chip"; b.type="button";
+    b.setAttribute("aria-pressed", !!isOn(o.v));
+    b.innerHTML=esc(o.label)+(o.small?` <small>${esc(o.small)}</small>`:"");
+    b.onclick=()=>{ onPick(o.v); save(); chipGroup(el,opts,isOn,onPick); };
+    el.appendChild(b);
+  });
+}
+
+/* --- Wiedergabe und Klaviatur --- */
+function playChord(notes, mode="harm", t0){
+  const c=ac(), t=t0 ?? c.currentTime+0.05, vol=Math.min(1, 1.7/notes.length);
+  let end=t;
+  if(mode==="arp"||mode==="both"){ notes.forEach((m,i)=>tone(m,t+i*0.36,1.2,0.85)); end=t+notes.length*0.36+0.35; }
+  if(mode==="harm"||mode==="both"){ const h = mode==="harm" ? t : end; notes.forEach(m=>tone(m,h,2.0,vol)); end=h+2.0; }
+  pulse((end-t)*1000);
+  return end;
+}
+function piano(start, end, opt={}){
+  const whites=[]; for(let m=start;m<=end;m++) if(WHITE.includes(m%12)) whites.push(m);
+  const w=100/whites.length, bw=w*0.6, tag=opt.tag||"div";
+  const cls=opt.cls||(()=> ""), lab=opt.label||(m=>nameOf(m));
+  const at=m=> tag==="button" ? ` type="button" data-m="${m}" aria-label="${nameOf(m)}"` : "";
+  let h="";
+  whites.forEach((m,i)=>{ h+=`<${tag} class="w ${cls(m)}"${at(m)} style="left:${i*w}%;width:${w}%"><em>${lab(m)}</em></${tag}>`; });
+  for(let m=start;m<=end;m++){
+    if(WHITE.includes(m%12)) continue;
+    const i=whites.indexOf(m-1)+1;
+    h+=`<${tag} class="b ${cls(m)}"${at(m)} style="left:${i*w-bw/2}%;width:${bw}%"><em>${lab(m)}</em></${tag}>`;
+  }
+  return h;
+}
+function chordKb(notes, names, rootPc){
+  const lo=Math.min(...notes), hi=Math.max(...notes);
+  const nm={}; notes.forEach((m,i)=>nm[m]=names[i]);
+  return `<div class="kb" role="img" aria-label="Klaviatur: ${esc(names.join(", "))}">${
+    piano(lo-(lo%12), hi+(11-hi%12), {cls:m=> nm[m]===undefined ? "" : (m%12===rootPc ? "a" : "z"), label:m=>nm[m]??nameOf(m)})}</div>
+    <div class="legend"><span><i style="background:var(--accent)"></i>Grundton</span><span><i style="background:var(--brass)"></i>weitere Akkordtöne</span></div>`;
+}
+function chordOf(root, type){
+  return {
+    names: type.f.map(([s,d])=>spellInt(root.l,root.a,s,d)),
+    notes: type.f.map(([s])=>48+root.pc+s)
+  };
+}
+
+/* --- Sitzungsstatistik (je Bereich) --- */
+function statBlock(id, label){
+  const el=document.getElementById(id);
+  el.innerHTML=`<p class="label" style="margin:0">Diese Sitzung</p>
+    <div class="stats">
+      <div class="stat"><b data-k="r">0</b><span>richtig</span></div>
+      <div class="stat"><b data-k="t">0</b><span>gesamt</span></div>
+      <div class="stat"><b data-k="s">0</b><span>Serie</span></div>
+      <div class="stat q"><b data-k="q">–</b><span>Quote</span></div>
+    </div>
+    <div class="btnrow"><button class="btn ghost" type="button">Sitzung zurücksetzen</button></div>`;
+  const st={r:0,t:0,s:0};
+  const show=()=>{ const g=k=>el.querySelector(`[data-k="${k}"]`);
+    g("r").textContent=st.r; g("t").textContent=st.t; g("s").textContent=st.s;
+    g("q").textContent= st.t ? Math.round(st.r/st.t*100)+" %" : "–"; };
+  el.querySelector("button").onclick=()=>{ st.r=st.t=st.s=0; show(); };
+  return { add(ok){ st.t++; if(ok){ st.r++; st.s++; } else st.s=0; show(); } };
+}
+function feedbackBox(el, ok, title, body){
+  el.className="feedback "+(ok?"ok":"no"); el.hidden=false;
+  el.innerHTML=`<strong>${title}</strong>${body}`;
+}
+
+/* ---------- 1) Akkordtyp hören ---------- */
+const ctStat=statBlock("ctStats");
+const ct={q:null, answered:true};
+function ctSettings(){
+  chipGroup($pc("ctTypes"), CH.filter(c=>c.ear).map(c=>({v:c.id,label:c.name,small:c.sym||"Dur"})),
+    v=>state.ch.earTypes.includes(v), v=>{ toggleKeep(state.ch.earTypes,v,CH.map(c=>c.id)); ctSettings(); ctRenderAnswers(); });
+  chipGroup($pc("ctPlayMode"), [{v:"harm",label:"zusammen"},{v:"arp",label:"gebrochen"},{v:"both",label:"beides"}],
+    v=>state.ch.earPlay===v, v=>{ state.ch.earPlay=v; ctSettings(); });
+  chipGroup($pc("ctInv"), [{v:false,label:"Grundstellung"},{v:true,label:"mit Umkehrungen"}],
+    v=>state.ch.earInv===v, v=>{ state.ch.earInv=v; ctSettings(); });
+  $pc("ctSum").textContent=`${state.ch.earTypes.length} Typen · ${{harm:"zusammen",arp:"gebrochen",both:"beides"}[state.ch.earPlay]}`;
+}
+function ctRenderAnswers(){
+  const box=$pc("ctAnswers"); box.innerHTML="";
+  state.ch.earTypes.forEach(id=>{
+    const c=CHBY[id], b=document.createElement("button");
+    b.className="ans"; b.id="cta-"+id;
+    b.innerHTML=`<span>${esc(c.name)}<small>${esc(c.sym||"Dur-Dreiklang")}</small></span>`;
+    b.onclick=()=>ctAnswer(id);
+    if(ct.answered && ct.q) b.disabled=true;
+    box.appendChild(b);
+  });
+}
+function ctNew(){
+  const id=pick(state.ch.earTypes), type=CHBY[id], root=pick(ROOTS);
+  let {notes,names}=chordOf(root,type);
+  let inv=0;
+  if(state.ch.earInv){
+    inv=Math.floor(Math.random()*notes.length);
+    for(let i=0;i<inv;i++){ notes.push(notes.shift()+12); names.push(names.shift()); }
+  }
+  if(Math.max(...notes)>76){ notes=notes.map(n=>n-12); }
+  ct.q={id,root,notes,names,inv}; ct.answered=false;
+  $pc("ctPill").textContent="Akkord"; $pc("ctTitle").textContent="Welcher Akkordtyp?";
+  $pc("ctHint").textContent=state.ch.earInv?"Kann auch eine Umkehrung sein.":"Grundstellung";
+  $pc("ctFeedback").hidden=true; $pc("ctNext").hidden=true; $pc("ctReplay").hidden=false;
+  ctRenderAnswers();
+  playChord(notes, state.ch.earPlay);
+}
+function ctAnswer(id){
+  if(!ct.q || ct.answered) return;
+  ct.answered=true;
+  const q=ct.q, type=CHBY[q.id], ok=id===q.id;
+  ctStat.add(ok);
+  document.querySelectorAll("#ctAnswers .ans").forEach(b=>{
+    b.disabled=true; const v=b.id.slice(4);
+    if(v===q.id) b.classList.add("correct"); else if(v===id) b.classList.add("wrong");
+  });
+  const invTxt=["Grundstellung","1. Umkehrung","2. Umkehrung","3. Umkehrung"][q.inv];
+  feedbackBox($pc("ctFeedback"), ok, `${ok?"Richtig!":"Leider nicht."} Gesucht war: ${esc(type.name)}`,
+    `<span>${esc(q.root.n+type.sym)} · ${esc(q.names.join(" – "))} · ${invTxt}</span>${chordKb(q.notes,q.names,q.root.pc)}`);
+  $pc("ctNext").hidden=false;
+}
+$pc("ctPlay").onclick=()=>{ if(!ct.q || ct.answered) ctNew(); else playChord(ct.q.notes, state.ch.earPlay); };
+$pc("ctReplay").onclick=()=>{ if(ct.q) playChord(ct.q.notes, state.ch.earPlay); };
+$pc("ctNext").onclick=ctNew;
+
+/* ---------- 2) Akkordtöne am Klavier ---------- */
+const cnStat=statBlock("cnStats");
+const cn={q:null, sel:new Set(), checked:false};
+const CN_LO=48, CN_HI=71;   // C3 bis H4
+function cnSettings(){
+  chipGroup($pc("cnTypes"), CH.map(c=>({v:c.id,label:c.sym?"C"+c.sym:"C",small:c.name})),
+    v=>state.ch.noteTypes.includes(v), v=>toggleKeep(state.ch.noteTypes,v,CH.map(c=>c.id)));
+  chipGroup($pc("cnRoots"), [{v:"nat",label:"nur Stammtöne",small:"C D E F G A H"},{v:"all",label:"alle 12"}],
+    v=>state.ch.noteRoots===v, v=>{ state.ch.noteRoots=v; });
+  chipGroup($pc("cnLabels"), [{v:false,label:"aus"},{v:true,label:"an"}],
+    v=>state.ch.noteLabels===v, v=>{ state.ch.noteLabels=v; cnRenderPiano(); });
+  $pc("cnSum").textContent=`${state.ch.noteTypes.length} Typen · ${state.ch.noteRoots==="all"?"alle Grundtöne":"Stammtöne"}`;
+}
+const _cnSet=cnSettings;
+function cnVoicing(){
+  const q=cn.q; return q.type.f.map(([s])=>{ let m=CN_LO+q.root.pc+s; while(m>CN_HI) m-=12; return m; });
+}
+function cnRenderPiano(){
+  const el=$pc("cnPiano");
+  el.classList.toggle("labels", !!state.ch.noteLabels);
+  const res=cn.result;
+  el.innerHTML=piano(CN_LO, CN_HI, {tag:"button", cls:m=>{
+    if(res) return res[m]||"";
+    return cn.sel.has(m) ? "sel" : "";
+  }, label:m=> res && res.names[m] ? res.names[m] : nameOf(m)});
+}
+function cnNew(){
+  const id=pick(state.ch.noteTypes), type=CHBY[id];
+  const pool=state.ch.noteRoots==="all" ? ROOTS : ROOTS.filter(r=>r.a===0);
+  const root=pick(pool), {names}=chordOf(root,type);
+  cn.q={id,type,root,names,pcs:new Set(type.f.map(([s])=>(root.pc+s)%12))};
+  cn.sel.clear(); cn.checked=false; cn.result=null;
+  $pc("cnSym").textContent=root.n+type.sym;
+  $pc("cnFeedback").hidden=true;
+  $pc("cnCheck").hidden=false; $pc("cnClear").hidden=false; $pc("cnNext").hidden=true; $pc("cnListen").hidden=true;
+  cnRenderPiano();
+}
+$pc("cnPiano").addEventListener("click",e=>{
+  const k=e.target.closest("[data-m]"); if(!k || cn.checked) return;
+  const m=+k.dataset.m;
+  if(cn.sel.has(m)) cn.sel.delete(m); else { cn.sel.add(m); tone(m, ac().currentTime+0.02, 0.9, 0.8); }
+  k.classList.toggle("sel", cn.sel.has(m));
+});
+function cnCheck(){
+  if(!cn.q || cn.checked) return;
+  if(!cn.sel.size){ feedbackBox($pc("cnFeedback"), false, "Noch nichts ausgewählt", "<span>Tippe die Töne des Akkords auf der Klaviatur an.</span>"); return; }
+  cn.checked=true;
+  const q=cn.q, selPcs=new Set([...cn.sel].map(m=>m%12));
+  const missing=[...q.pcs].filter(p=>!selPcs.has(p));
+  const extra=[...selPcs].filter(p=>!q.pcs.has(p));
+  const ok=!missing.length && !extra.length;
+  cnStat.add(ok);
+  // Ergebnis auf der Klaviatur markieren
+  const res={names:{}}, nameByPc={};
+  q.type.f.forEach(([s],i)=>{ nameByPc[(q.root.pc+s)%12]=q.names[i]; });
+  for(let m=CN_LO;m<=CN_HI;m++){
+    if(cn.sel.has(m)){ res[m]= q.pcs.has(m%12) ? "ok" : "bad"; if(nameByPc[m%12]) res.names[m]=nameByPc[m%12]; }
+  }
+  cnVoicing().forEach(m=>{ if(!selPcs.has(m%12)){ res[m]="miss"; res.names[m]=nameByPc[m%12]; } });
+  cn.result=res; cnRenderPiano();
+  const sym=esc(q.root.n+q.type.sym), list=esc(q.names.join(" – "));
+  let body=`<span>${sym} = ${list}</span>`;
+  if(!ok){
+    const parts=[];
+    if(missing.length) parts.push("Fehlt: "+missing.map(p=>esc(nameByPc[p])).join(", "));
+    if(extra.length) parts.push("Zu viel: "+extra.map(p=>esc(NOTE[p])).join(", "));
+    body+=`<span class="hint">${parts.join(" · ")}</span>`;
+  }
+  body+=`<div class="legend"><span><i style="background:var(--good)"></i>richtig</span><span><i style="background:var(--bad)"></i>zu viel</span><span><i style="background:var(--brass)"></i>fehlt</span></div>`;
+  feedbackBox($pc("cnFeedback"), ok, ok?"Richtig!":"Nicht ganz.", body);
+  $pc("cnCheck").hidden=true; $pc("cnClear").hidden=true; $pc("cnNext").hidden=false; $pc("cnListen").hidden=false;
+  playChord(cnVoicing().sort((a,b)=>a-b), "harm");
+}
+$pc("cnCheck").onclick=cnCheck;
+$pc("cnClear").onclick=()=>{ if(cn.checked) return; cn.sel.clear(); cnRenderPiano(); $pc("cnFeedback").hidden=true; };
+$pc("cnNext").onclick=cnNew;
+$pc("cnListen").onclick=()=>{ if(cn.q) playChord(cnVoicing().sort((a,b)=>a-b), "both"); };
+
+/* ---------- 3) Tonart aus Akkorden ---------- */
+const ckStat=statBlock("ckStats");
+const KEYS=[{n:"C",l:0,a:0},{n:"G",l:4,a:0},{n:"D",l:1,a:0},{n:"A",l:5,a:0},{n:"E",l:2,a:0},{n:"H",l:6,a:0},
+  {n:"Fis",l:3,a:1},{n:"Des",l:1,a:-1},{n:"As",l:5,a:-1},{n:"Es",l:2,a:-1},{n:"B",l:6,a:-1},{n:"F",l:3,a:0}];
+KEYS.forEach(k=>k.pc=((LETPC[k.l]+k.a)%12+12)%12);
+const DEG=[{r:"I",s:0,q:"maj"},{r:"ii",s:2,q:"min"},{r:"iii",s:4,q:"min"},{r:"IV",s:5,q:"maj"},
+  {r:"V",s:7,q:"maj"},{r:"vi",s:9,q:"min"},{r:"vii°",s:11,q:"dim"}];
+const QSYM={maj:"",min:"m",dim:"dim"}, QF={maj:[0,4,7],min:[0,3,7],dim:[0,3,6]};
+function keyChords(k){
+  return DEG.map((d,i)=>({deg:d.r, pc:(k.pc+d.s)%12, q:d.q, name:spellInt(k.l,k.a,d.s,i+1)+QSYM[d.q]}));
+}
+const ck={q:null, sel:new Set(), checked:false};
+function ckSettings(){
+  chipGroup($pc("ckPool"), KEYS.map(k=>({v:k.n,label:k.n+"-Dur"})),
+    v=>state.ch.keyPool.includes(v), v=>toggleKeep(state.ch.keyPool,v,KEYS.map(k=>k.n)));
+  chipGroup($pc("ckDeg"), DEG.map((d,i)=>({v:i,label:d.r})),
+    v=>state.ch.keyDeg.includes(v), v=>toggleKeep(state.ch.keyDeg,v,[0,1,2,3,4,5,6]));
+  chipGroup($pc("ckN"), [2,3,4].map(n=>({v:n,label:n+" Akkorde"})),
+    v=>state.ch.keyN===v, v=>{ state.ch.keyN=v; });
+  $pc("ckSum").textContent=`${state.ch.keyPool.length} Tonarten · Stufen ${state.ch.keyDeg.map(i=>DEG[i].r).join(" ")}`;
+}
+function ckNew(){
+  const key=KEYS.find(k=>k.n===pick(state.ch.keyPool));
+  const degs=[...state.ch.keyDeg].sort(()=>Math.random()-0.5).slice(0, Math.min(state.ch.keyN, state.ch.keyDeg.length));
+  const all=keyChords(key), chords=degs.map(i=>all[i]);
+  const answer=KEYS.filter(k=>{ const kc=keyChords(k); return chords.every(c=>kc.some(x=>x.pc===c.pc && x.q===c.q)); });
+  ck.q={key,chords,answer:new Set(answer.map(k=>k.n))}; ck.sel.clear(); ck.checked=false;
+  $pc("ckChords").innerHTML=chords.map(c=>`<span>${esc(c.name)}</span>`).join("");
+  $pc("ckFeedback").hidden=true; $pc("ckCheck").hidden=false; $pc("ckNext").hidden=true;
+  ckRenderKeys();
+}
+function ckRenderKeys(){
+  const box=$pc("ckKeys"); box.innerHTML="";
+  KEYS.forEach(k=>{
+    const b=document.createElement("button"); b.className="keybtn"; b.type="button"; b.id="ck-"+k.n;
+    b.textContent=k.n+"\u2011Dur";
+    b.setAttribute("aria-pressed", ck.sel.has(k.n));
+    if(ck.checked){
+      b.disabled=true;
+      const inA=ck.q.answer.has(k.n), inS=ck.sel.has(k.n);
+      if(inA&&inS) b.classList.add("ok"); else if(inS) b.classList.add("bad"); else if(inA) b.classList.add("miss");
+    } else b.onclick=()=>{ ck.sel.has(k.n)?ck.sel.delete(k.n):ck.sel.add(k.n); b.setAttribute("aria-pressed", ck.sel.has(k.n)); };
+    box.appendChild(b);
+  });
+}
+function ckCheck(){
+  if(!ck.q || ck.checked) return;
+  if(!ck.sel.size){ feedbackBox($pc("ckFeedback"), false, "Noch keine Tonart gewählt", "<span>Wähle alle Dur-Tonarten, in denen die Akkorde vorkommen.</span>"); return; }
+  ck.checked=true;
+  const A=ck.q.answer, ok=A.size===ck.sel.size && [...A].every(n=>ck.sel.has(n));
+  ckStat.add(ok);
+  ckRenderKeys();
+  const lines=KEYS.filter(k=>A.has(k.n)).map(k=>{
+    const kc=keyChords(k);
+    const parts=ck.q.chords.map(c=>{ const x=kc.find(x=>x.pc===c.pc && x.q===c.q); return `${esc(c.name)} = ${x.deg}`; });
+    return `<li><b>${k.n}\u2011Dur:</b> ${parts.join(" · ")}</li>`;
+  }).join("");
+  feedbackBox($pc("ckFeedback"), ok, ok ? (A.size>1?"Richtig, alle gefunden!":"Richtig!") : `Nicht ganz. Möglich ${A.size>1?"sind":"ist"}: ${[...KEYS.filter(k=>A.has(k.n))].map(k=>k.n+"\u2011Dur").join(", ")}`,
+    `<ul class="analysis">${lines}</ul><div class="legend"><span><i style="background:var(--good)"></i>richtig gewählt</span><span><i style="background:var(--bad)"></i>falsch gewählt</span><span><i style="background:var(--brass)"></i>übersehen</span></div>`);
+  $pc("ckCheck").hidden=true; $pc("ckNext").hidden=false;
+}
+function ckPlayChords(){
+  if(!ck.q) return;
+  const c=ac(); let t=c.currentTime+0.05;
+  ck.q.chords.forEach(ch=>{
+    const base=48+ch.pc, notes=QF[ch.q].map(s=>base+s).map(m=>m>64?m-12:m);
+    notes.forEach(m=>tone(m,t,1.05,0.55)); tone(base>59?base-24:base-12,t,1.05,0.5); t+=1.0;
+  });
+}
+$pc("ckPlay").onclick=ckPlayChords;
+$pc("ckCheck").onclick=ckCheck;
+$pc("ckNext").onclick=ckNew;
+
+/* Einstellungen zeichnen; Zusammenfassungen nach jedem Klick aktualisieren */
+function chordSettingsAll(){ ctSettings(); cnSettings(); ckSettings(); }
+["ctTypes","ctPlayMode","ctInv","cnTypes","cnRoots","cnLabels","ckPool","ckDeg","ckN"].forEach(id=>
+  $pc(id).addEventListener("click",()=>setTimeout(()=>{
+    $pc("ctSum").textContent=`${state.ch.earTypes.length} Typen · ${{harm:"zusammen",arp:"gebrochen",both:"beides"}[state.ch.earPlay]}`;
+    $pc("cnSum").textContent=`${state.ch.noteTypes.length} Typen · ${state.ch.noteRoots==="all"?"alle Grundtöne":"Stammtöne"}`;
+    $pc("ckSum").textContent=`${state.ch.keyPool.length} Tonarten · Stufen ${state.ch.keyDeg.map(i=>DEG[i].r).join(" ")}`;
+  },0)));
+chordSettingsAll();
+ctRenderAnswers();
+
 /* ---------- Tabs & keys ---------- */
 let view="quiz";
-document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
-  view=t.dataset.view;
-  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x===t));
-  ["quiz","explore","sing","hints"].forEach(v=>document.getElementById("view-"+v).hidden = v!==view);
-  document.getElementById("settings").hidden = view==="explore" || view==="hints";
-  if(view==="sing" && !sg) newSing();
-  if(view!=="sing" && pc.on) pcStop();
+const VIEWS=["quiz","explore","sing","hints","ctype","cnotes","ckey"], CHORD_VIEWS=["ctype","cnotes","ckey"];
+const lastIn={iv:"quiz", ch:"ctype"};
+function showView(v){
+  view=v;
+  lastIn[CHORD_VIEWS.includes(v)?"ch":"iv"]=v;
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.view===v));
+  VIEWS.forEach(x=>document.getElementById("view-"+x).hidden = x!==v);
+  document.getElementById("settings").hidden = !(v==="quiz" || v==="sing");
+  if(v==="sing" && !sg) newSing();
+  if(v!=="sing" && pc.on) pcStop();
+  if(v==="cnotes" && !cn.q) cnNew();
+  if(v==="ckey" && !ck.q) ckNew();
+}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>showView(t.dataset.view));
+document.querySelectorAll(".sectbtn").forEach(b=>b.onclick=()=>{
+  const s=b.dataset.sect;
+  document.querySelectorAll(".sectbtn").forEach(x=>x.setAttribute("aria-selected", x===b));
+  document.getElementById("tabsIv").hidden = s!=="iv";
+  document.getElementById("tabsCh").hidden = s!=="ch";
+  showView(lastIn[s]);
 });
 document.addEventListener("keydown",e=>{
   if(view!=="quiz" || e.target.closest("button.tab, summary, input, select, .chip")) return;
