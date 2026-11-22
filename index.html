@@ -60,10 +60,10 @@ h1 span{color:var(--brass)}
 .staff b{position:absolute;left:58px;right:36px;top:22px;height:0;border-top:1.5px dashed var(--muted);opacity:.5;transform:rotate(-27deg);transform-origin:left}
 
 /* Tabs */
-.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px;box-shadow:var(--shadow)}
-.tab{border:0;background:transparent;color:var(--muted);font:700 15px var(--body);padding:10px 6px;border-radius:10px;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px}
+.tab{border:0;background:transparent;color:var(--muted);font:700 15px var(--body);padding:9px 6px;border-radius:10px;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tab:hover{color:var(--ink)}
-.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.tab[aria-selected="true"]{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
 
 /* Einstellungen */
 .setbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
@@ -219,10 +219,12 @@ td.pc{width:42%}
 
 /* Navigation: Bereich + Tabs */
 .nav{display:flex;flex-direction:column;gap:8px}
-.sect{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:12px;background:color-mix(in srgb,var(--accent) 9%,var(--bg));border:1px solid var(--line)}
-.sectbtn{border:0;background:transparent;color:var(--muted);font:700 15px var(--display);padding:8px;border-radius:9px;cursor:pointer;transition:background .15s,color .15s}
-.sectbtn:hover{color:var(--ink)}
-.sectbtn[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.sect{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sectbtn{display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:800 17px var(--display);letter-spacing:-.01em;padding:12px 8px;border-radius:14px;cursor:pointer;box-shadow:var(--shadow);transition:background .15s,color .15s,border-color .15s}
+.sectbtn svg{width:22px;height:22px;flex:none}
+.sectbtn:hover{border-color:var(--ink)}
+.sectbtn[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.navlabel{font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;margin:0 0 -2px}
 .tabs.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 
 /* Akkorde */
@@ -251,6 +253,7 @@ td.pc{width:42%}
 .keybtn.bad{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
 .keybtn.miss{border-color:var(--brass);border-style:dashed;color:var(--brass)}
 .keybtn:disabled{cursor:default}
+.keyhead{grid-column:1/-1;margin:6px 0 -2px;font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
 .analysis{margin:4px 0 0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:3px}
 
 /* Diktat */
@@ -308,7 +311,8 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
   .staff b{left:30px;right:22px}
   .sub{font-size:13px}
   .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:4px;margin-block:-4px;gap:6px}
-  .sectbtn{padding:7px;font-size:14px}
+  .sectbtn{flex-direction:column;gap:3px;padding:9px 4px;font-size:15px}
+  .sectbtn svg{width:20px;height:20px}
   .kb.piano{height:124px}
   .chordsym{font-size:50px}
   .chordlist span{font-size:26px;padding:10px 14px;min-width:60px}
@@ -347,10 +351,11 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
   </header>
 
   <nav class="nav">
+    <p class="navlabel">Bereich wählen</p>
     <div class="sect" role="tablist" aria-label="Bereich">
-      <button class="sectbtn" role="tab" id="sect-iv" data-sect="iv" aria-selected="true">Intervalle</button>
-      <button class="sectbtn" role="tab" id="sect-ch" data-sect="ch" aria-selected="false">Akkorde</button>
-      <button class="sectbtn" role="tab" id="sect-dk" data-sect="dk" aria-selected="false">Diktat</button>
+      <button class="sectbtn" role="tab" id="sect-iv" data-sect="iv" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 17V6l10-2v11" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="5.5" cy="17.5" rx="3" ry="2.3" fill="currentColor"/><ellipse cx="15.5" cy="15.5" rx="3" ry="2.3" fill="currentColor"/></svg><span>Intervalle</span></button>
+      <button class="sectbtn" role="tab" id="sect-ch" data-sect="ch" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 19V3" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="12.5" cy="19" rx="3.6" ry="2.5" fill="currentColor"/><ellipse cx="12.5" cy="13.2" rx="3.6" ry="2.5" fill="currentColor"/><ellipse cx="12.5" cy="7.4" rx="3.6" ry="2.5" fill="currentColor"/></svg><span>Akkorde</span></button>
+      <button class="sectbtn" role="tab" id="sect-dk" data-sect="dk" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4.5L16 4.5l3.5 3.5L8.5 19z M13.5 7l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Diktat</span></button>
     </div>
     <div class="tabs" role="tablist" id="tabsIv">
       <button class="tab" role="tab" id="tab-quiz" aria-selected="true" data-view="quiz">Quiz</button>
@@ -548,6 +553,7 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
     <details class="setbox subset">
       <summary><b>Einstellungen</b><span id="ckSum"></span></summary>
       <section class="settings">
+        <div><p class="label">Tongeschlecht</p><div class="chips" id="ckMode"></div></div>
         <div><p class="label">Tonarten, aus denen Aufgaben kommen</p><div class="chips" id="ckPool"></div></div>
         <div><p class="label">Stufen</p><div class="chips" id="ckDeg"></div></div>
         <div><p class="label">Anzahl Akkorde</p><div class="chips" id="ckN"></div></div>
@@ -559,7 +565,7 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
     </div>
     <div class="btnrow"><button class="btn ghost" id="ckPlay">Akkorde anhören</button></div>
     <div>
-      <p class="label">In welchen Dur-Tonarten sind alle leitereigen? Mehrere möglich</p>
+      <p class="label" id="ckAsk">In welchen Dur-Tonarten sind alle leitereigen? Mehrere möglich</p>
       <div class="keys" id="ckKeys"></div>
     </div>
     <div id="ckFeedback" hidden></div>
@@ -575,6 +581,7 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
     <details class="setbox subset">
       <summary><b>Einstellungen</b><span id="mdSum"></span></summary>
       <section class="settings">
+        <div><p class="label">Schlüssel</p><div class="chips" id="mdClef"></div></div>
         <div><p class="label">Länge</p><div class="chips" id="mdLen"></div></div>
         <div><p class="label">Tonarten</p><div class="chips" id="mdKeys"></div></div>
         <div><p class="label">Bewegung</p><div class="chips" id="mdMotion"></div></div>
@@ -599,6 +606,8 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
     <div class="staffctl" id="mdStaffCtl">
       <button class="sbtn" id="mdUp" aria-label="Ausgewählte Note höher">▲ höher</button>
       <button class="sbtn" id="mdDown" aria-label="Ausgewählte Note tiefer">▼ tiefer</button>
+      <button class="sbtn" id="mdSharp" aria-label="Markierte Note einen Halbton höher">♯</button>
+      <button class="sbtn" id="mdFlat" aria-label="Markierte Note einen Halbton tiefer">♭</button>
       <button class="sbtn" id="mdPrev" aria-label="Vorherige Note wählen">◀</button>
       <button class="sbtn" id="mdNextSel" aria-label="Nächste Note wählen">▶</button>
     </div>
@@ -1358,7 +1367,7 @@ const cnStat=statBlock("cnStats");
 const cn={q:null, sel:new Set(), checked:false};
 const CN_LO=48, CN_HI=71;   // C3 bis H4
 function cnSettings(){
-  chipGroup($pc("cnTypes"), CH.map(c=>({v:c.id,label:c.sym?"C"+c.sym:"C",small:c.name})),
+  chipGroup($pc("cnTypes"), CH.map(c=>({v:c.id,label:c.sym||"Dur",small:c.sym?c.name:"Dreiklang"})),
     v=>state.ch.noteTypes.includes(v), v=>toggleKeep(state.ch.noteTypes,v,CH.map(c=>c.id)));
   chipGroup($pc("cnRoots"), [{v:"nat",label:"nur Stammtöne",small:"C D E F G A H"},{v:"all",label:"alle 12"}],
     v=>state.ch.noteRoots===v, v=>{ state.ch.noteRoots=v; });
@@ -1434,62 +1443,91 @@ $pc("cnListen").onclick=()=>{ if(cn.q) playChord(cnVoicing().sort((a,b)=>a-b), "
 /* ---------- 3) Tonart aus Akkorden ---------- */
 const ckStat=statBlock("ckStats");
 const KEYS=[{n:"C",l:0,a:0},{n:"G",l:4,a:0},{n:"D",l:1,a:0},{n:"A",l:5,a:0},{n:"E",l:2,a:0},{n:"H",l:6,a:0},
-  {n:"Fis",l:3,a:1},{n:"Des",l:1,a:-1},{n:"As",l:5,a:-1},{n:"Es",l:2,a:-1},{n:"B",l:6,a:-1},{n:"F",l:3,a:0}];
+  {n:"Fis",l:3,a:1},{n:"Des",l:1,a:-1},{n:"As",l:5,a:-1},{n:"Es",l:2,a:-1},{n:"B",l:6,a:-1},{n:"F",l:3,a:0},
+  // Molltonarten (natürliches Moll), parallel zur Reihe oben
+  {n:"a",l:5,a:0,min:1},{n:"e",l:2,a:0,min:1},{n:"h",l:6,a:0,min:1},{n:"fis",l:3,a:1,min:1},{n:"cis",l:0,a:1,min:1},{n:"gis",l:4,a:1,min:1},
+  {n:"es",l:2,a:-1,min:1},{n:"b",l:6,a:-1,min:1},{n:"f",l:3,a:0,min:1},{n:"c",l:0,a:0,min:1},{n:"g",l:4,a:0,min:1},{n:"d",l:1,a:0,min:1}];
 KEYS.forEach(k=>k.pc=((LETPC[k.l]+k.a)%12+12)%12);
 const DEG=[{r:"I",s:0,q:"maj"},{r:"ii",s:2,q:"min"},{r:"iii",s:4,q:"min"},{r:"IV",s:5,q:"maj"},
   {r:"V",s:7,q:"maj"},{r:"vi",s:9,q:"min"},{r:"vii°",s:11,q:"dim"}];
+const DEG_MIN=[{r:"i",s:0,q:"min"},{r:"ii°",s:2,q:"dim"},{r:"III",s:3,q:"maj"},{r:"iv",s:5,q:"min"},
+  {r:"v",s:7,q:"min"},{r:"VI",s:8,q:"maj"},{r:"VII",s:10,q:"maj"}];
 const QSYM={maj:"",min:"m",dim:"dim"}, QF={maj:[0,4,7],min:[0,3,7],dim:[0,3,6]};
 function keyChords(k){
-  return DEG.map((d,i)=>({deg:d.r, pc:(k.pc+d.s)%12, q:d.q, name:spellInt(k.l,k.a,d.s,i+1)+QSYM[d.q]}));
+  return (k.min?DEG_MIN:DEG).map((d,i)=>({deg:d.r, pc:(k.pc+d.s)%12, q:d.q, name:spellInt(k.l,k.a,d.s,i+1)+QSYM[d.q]}));
 }
+if(state.ch.keyMode===undefined) state.ch.keyMode="maj";
+const modeKeys=()=>KEYS.filter(k=> state.ch.keyMode==="both" || (state.ch.keyMode==="min") === !!k.min);
 const ck={q:null, sel:new Set(), checked:false};
 function ckSettings(){
-  chipGroup($pc("ckPool"), KEYS.map(k=>({v:k.n,label:k.n+"-Dur"})),
-    v=>state.ch.keyPool.includes(v), v=>toggleKeep(state.ch.keyPool,v,KEYS.map(k=>k.n)));
-  chipGroup($pc("ckDeg"), DEG.map((d,i)=>({v:i,label:d.r})),
+  chipGroup($pc("ckMode"), [{v:"maj",label:"Dur"},{v:"min",label:"Moll",small:"natürlich"},{v:"both",label:"Dur und Moll"}],
+    v=>state.ch.keyMode===v, v=>{ state.ch.keyMode=v; ckSettings(); ck.q=null; if(view==="ckey") ckNew(); });
+  chipGroup($pc("ckPool"), modeKeys().map(k=>({v:k.n,label:keyLabel(k)})),
+    v=>state.ch.keyPool.includes(v), v=>{
+      const i=state.ch.keyPool.indexOf(v), inMode=state.ch.keyPool.filter(n=>modeKeys().some(k=>k.n===n));
+      if(i>=0){ if(inMode.length>1) state.ch.keyPool.splice(i,1); } else state.ch.keyPool.push(v);
+    });
+  const lab=i=> state.ch.keyMode==="maj" ? DEG[i].r : state.ch.keyMode==="min" ? DEG_MIN[i].r : DEG[i].r+" / "+DEG_MIN[i].r;
+  chipGroup($pc("ckDeg"), DEG.map((d,i)=>({v:i,label:lab(i)})),
     v=>state.ch.keyDeg.includes(v), v=>toggleKeep(state.ch.keyDeg,v,[0,1,2,3,4,5,6]));
   chipGroup($pc("ckN"), [2,3,4].map(n=>({v:n,label:n+" Akkorde"})),
     v=>state.ch.keyN===v, v=>{ state.ch.keyN=v; });
-  $pc("ckSum").textContent=`${state.ch.keyPool.length} Tonarten · Stufen ${state.ch.keyDeg.map(i=>DEG[i].r).join(" ")}`;
+  ckSummary();
+}
+function ckSummary(){
+  const m={maj:"Dur",min:"Moll",both:"Dur + Moll"}[state.ch.keyMode];
+  const n=state.ch.keyPool.filter(x=>modeKeys().some(k=>k.n===x)).length;
+  $pc("ckSum").textContent=`${m} · ${n||"alle"} Tonarten · ${state.ch.keyN} Akkorde`;
 }
 function ckNew(){
-  const kn=pick(state.ch.keyPool), key=KEYS.find(k=>k.n===kn);
+  let pool=modeKeys().filter(k=>state.ch.keyPool.includes(k.n));
+  if(!pool.length) pool=modeKeys();
+  const key=pick(pool);
   const degs=[...state.ch.keyDeg].sort(()=>Math.random()-0.5).slice(0, Math.min(state.ch.keyN, state.ch.keyDeg.length));
   const all=keyChords(key), chords=degs.map(i=>all[i]);
-  const answer=KEYS.filter(k=>{ const kc=keyChords(k); return chords.every(c=>kc.some(x=>x.pc===c.pc && x.q===c.q)); });
+  const answer=modeKeys().filter(k=>{ const kc=keyChords(k); return chords.every(c=>kc.some(x=>x.pc===c.pc && x.q===c.q)); });
   ck.q={key,chords,answer:new Set(answer.map(k=>k.n))}; ck.sel.clear(); ck.checked=false;
   $pc("ckChords").innerHTML=chords.map(c=>`<span>${esc(c.name)}</span>`).join("");
+  $pc("ckAsk").textContent = state.ch.keyMode==="maj" ? "In welchen Dur-Tonarten sind alle leitereigen? Mehrere möglich"
+    : state.ch.keyMode==="min" ? "In welchen Moll-Tonarten sind alle leitereigen? Mehrere möglich"
+    : "In welchen Tonarten sind alle leitereigen? Mehrere möglich";
   $pc("ckFeedback").hidden=true; $pc("ckCheck").hidden=false; $pc("ckNext").hidden=true;
   ckRenderKeys();
 }
 function ckRenderKeys(){
   const box=$pc("ckKeys"); box.innerHTML="";
-  KEYS.forEach(k=>{
-    const b=document.createElement("button"); b.className="keybtn"; b.type="button"; b.id="ck-"+k.n;
-    b.textContent=k.n+"\u2011Dur";
-    b.setAttribute("aria-pressed", ck.sel.has(k.n));
-    if(ck.checked){
-      b.disabled=true;
-      const inA=ck.q.answer.has(k.n), inS=ck.sel.has(k.n);
-      if(inA&&inS) b.classList.add("ok"); else if(inS) b.classList.add("bad"); else if(inA) b.classList.add("miss");
-    } else b.onclick=()=>{ ck.sel.has(k.n)?ck.sel.delete(k.n):ck.sel.add(k.n); b.setAttribute("aria-pressed", ck.sel.has(k.n)); };
-    box.appendChild(b);
+  const groups = state.ch.keyMode==="both" ? [["Dur",KEYS.filter(k=>!k.min)],["Moll",KEYS.filter(k=>k.min)]] : [[null,modeKeys()]];
+  groups.forEach(([title,keys])=>{
+    if(title){ const h=document.createElement("p"); h.className="keyhead"; h.textContent=title; box.appendChild(h); }
+    keys.forEach(k=>{
+      const b=document.createElement("button"); b.className="keybtn"; b.type="button"; b.id="ck-"+k.n;
+      b.textContent=keyLabel(k);
+      b.setAttribute("aria-pressed", ck.sel.has(k.n));
+      if(ck.checked){
+        b.disabled=true;
+        const inA=ck.q.answer.has(k.n), inS=ck.sel.has(k.n);
+        if(inA&&inS) b.classList.add("ok"); else if(inS) b.classList.add("bad"); else if(inA) b.classList.add("miss");
+      } else b.onclick=()=>{ ck.sel.has(k.n)?ck.sel.delete(k.n):ck.sel.add(k.n); b.setAttribute("aria-pressed", ck.sel.has(k.n)); };
+      box.appendChild(b);
+    });
   });
 }
 function ckCheck(){
   if(!ck.q || ck.checked) return;
-  if(!ck.sel.size){ feedbackBox($pc("ckFeedback"), false, "Noch keine Tonart gewählt", "<span>Wähle alle Dur-Tonarten, in denen die Akkorde vorkommen.</span>"); return; }
+  if(!ck.sel.size){ feedbackBox($pc("ckFeedback"), false, "Noch keine Tonart gewählt", "<span>Wähle alle Tonarten, in denen die Akkorde vorkommen.</span>"); return; }
   ck.checked=true;
   const A=ck.q.answer, ok=A.size===ck.sel.size && [...A].every(n=>ck.sel.has(n));
   ckStat.add(ok);
   ckRenderKeys();
-  const lines=KEYS.filter(k=>A.has(k.n)).map(k=>{
+  const ans=KEYS.filter(k=>A.has(k.n));
+  const lines=ans.map(k=>{
     const kc=keyChords(k);
     const parts=ck.q.chords.map(c=>{ const x=kc.find(x=>x.pc===c.pc && x.q===c.q); return `${esc(c.name)} = ${x.deg}`; });
-    return `<li><b>${k.n}\u2011Dur:</b> ${parts.join(" · ")}</li>`;
+    return `<li><b>${keyLabel(k)}:</b> ${parts.join(" · ")}</li>`;
   }).join("");
-  feedbackBox($pc("ckFeedback"), ok, ok ? (A.size>1?"Richtig, alle gefunden!":"Richtig!") : `Nicht ganz. Möglich ${A.size>1?"sind":"ist"}: ${[...KEYS.filter(k=>A.has(k.n))].map(k=>k.n+"\u2011Dur").join(", ")}`,
-    `<ul class="analysis">${lines}</ul><div class="legend"><span><i style="background:var(--good)"></i>richtig gewählt</span><span><i style="background:var(--bad)"></i>falsch gewählt</span><span><i style="background:var(--brass)"></i>übersehen</span></div>`);
+  const note = state.ch.keyMode!=="maj" ? `<span class="hint">Moll = natürliches Moll. Dur- und parallele Molltonart haben dieselben leitereigenen Akkorde.</span>` : "";
+  feedbackBox($pc("ckFeedback"), ok, ok ? (A.size>1?"Richtig, alle gefunden!":"Richtig!") : `Nicht ganz. Möglich ${A.size>1?"sind":"ist"}: ${ans.map(keyLabel).join(", ")}`,
+    `<ul class="analysis">${lines}</ul>${note}<div class="legend"><span><i style="background:var(--good)"></i>richtig gewählt</span><span><i style="background:var(--bad)"></i>falsch gewählt</span><span><i style="background:var(--brass)"></i>übersehen</span></div>`);
   $pc("ckCheck").hidden=true; $pc("ckNext").hidden=false;
 }
 function ckPlayChords(){
@@ -1506,26 +1544,37 @@ $pc("ckNext").onclick=ckNew;
 
 /* Einstellungen zeichnen; Zusammenfassungen nach jedem Klick aktualisieren */
 function chordSettingsAll(){ ctSettings(); cnSettings(); ckSettings(); }
-["ctTypes","ctPlayMode","ctInv","cnTypes","cnRoots","cnLabels","ckPool","ckDeg","ckN"].forEach(id=>
+["ctTypes","ctPlayMode","ctInv","cnTypes","cnRoots","cnLabels","ckMode","ckPool","ckDeg","ckN"].forEach(id=>
   $pc(id).addEventListener("click",()=>setTimeout(()=>{
     $pc("ctSum").textContent=`${state.ch.earTypes.length} Typen · ${{harm:"zusammen",arp:"gebrochen",both:"beides"}[state.ch.earPlay]}`;
     $pc("cnSum").textContent=`${state.ch.noteTypes.length} Typen · ${state.ch.noteRoots==="all"?"alle Grundtöne":"Stammtöne"}`;
-    $pc("ckSum").textContent=`${state.ch.keyPool.length} Tonarten · Stufen ${state.ch.keyDeg.map(i=>DEG[i].r).join(" ")}`;
+    ckSummary();
   },0)));
 chordSettingsAll();
 ctRenderAnswers();
 
 /* =====================================================================
    MELODIEDIKTAT
-   Melodien sind leitereigen in der gewählten Dur-Tonart, gleichmäßige
-   Viertel, Tonraum C4–H5. Eingabe per Klaviatur oder auf dem Notensystem.
+   Melodien sind leitereigen (Moll: harmonischer Leitton vor dem Grundton),
+   gleichmäßige Viertel, Violin- oder Bassschlüssel. Eingabe per Klaviatur
+   oder auf dem Notensystem.
    ===================================================================== */
 const MD_KEYS=[
   {n:"C",l:0,a:0,sh:0,fl:0},{n:"G",l:4,a:0,sh:1,fl:0},{n:"D",l:1,a:0,sh:2,fl:0},{n:"A",l:5,a:0,sh:3,fl:0},
-  {n:"F",l:3,a:0,sh:0,fl:1},{n:"B",l:6,a:-1,sh:0,fl:2},{n:"Es",l:2,a:-1,sh:0,fl:3}];
+  {n:"F",l:3,a:0,sh:0,fl:1},{n:"B",l:6,a:-1,sh:0,fl:2},{n:"Es",l:2,a:-1,sh:0,fl:3},
+  {n:"a",l:5,a:0,sh:0,fl:0,min:1},{n:"e",l:2,a:0,sh:1,fl:0,min:1},{n:"h",l:6,a:0,sh:2,fl:0,min:1},{n:"fis",l:3,a:1,sh:3,fl:0,min:1},
+  {n:"d",l:1,a:0,sh:0,fl:1,min:1},{n:"g",l:4,a:0,sh:0,fl:2,min:1},{n:"c",l:0,a:0,sh:0,fl:3,min:1}];
+function keyLabel(k){ return k.n+"\u2011"+(k.min?"Moll":"Dur"); }
 const SHARP_ORDER=[3,0,4,1,5,2,6], FLAT_ORDER=[6,2,5,1,4,0,3];
 const SHARP_STEPS=[10,7,11,8,5,9,6], FLAT_STEPS=[6,9,5,8,4,7,3];   // Lage im Violinschlüssel
-const MD_LO=60, MD_HI=83, STEP_MIN=0, STEP_MAX=13;              // C4 … H5
+/* Schlüssel: Stufe 0 = C4. bottom = unterste Linie, sig = Verschiebung der Vorzeichen.
+   top/bot = Glyphen-Umriss in Linienabständen über/unter der Bezugslinie (G- bzw. F-Linie) */
+const CLEFS={
+  treble:{name:"Violinschlüssel", bottom:2,   lo:60, hi:83, smin:0,   smax:13, sig:0,
+          glyph:"𝄞", ref:4,  up:4.39, down:2.63},
+  bass:  {name:"Bassschlüssel",   bottom:-10, lo:41, hi:64, smin:-11, smax:2,  sig:-14,
+          glyph:"𝄢", ref:-4, up:1.02, down:2.54}
+};
 function keyAcc(key, L){
   if(SHARP_ORDER.slice(0,key.sh).includes(L)) return 1;
   if(FLAT_ORDER.slice(0,key.fl).includes(L)) return -1;
@@ -1543,12 +1592,17 @@ function spellInKey(key, midi){
     const acc=keyAcc(key,L);
     if(((LETPC[L]+acc)%12+12)%12===pc) return {step:fit(L,acc), sign:null};
   }
+  if(key.min){                     // Moll: erhöhte 7. Stufe immer als Leitton schreiben (z. B. Eis in fis-Moll)
+    const L7=(key.l+6)%7, acc=keyAcc(key,L7)+1;
+    if(((LETPC[L7]+acc)%12+12)%12===pc) return {step:fit(L7,acc), sign: acc===0?"♮":"♯"};
+  }
   for(let L=0;L<7;L++){            // Vorzeichen der Tonart aufheben (z. B. F♮ in G-Dur)
     if(keyAcc(key,L)!==0 && LETPC[L]===pc) return {step:fit(L,0), sign:"♮"};
   }
-  const up = key.fl===0;           // Kreuz- und C-Tonarten: erhöhen, B-Tonarten: erniedrigen
-  for(let L=0;L<7;L++){
-    const acc=keyAcc(key,L)+(up?1:-1);
+  // Moll und Kreuz-/C-Tonarten: lieber erhöhen (Leitton), B-Tonarten: lieber erniedrigen
+  const dirs = key.min || key.fl===0 ? [1,-1] : [-1,1];
+  for(const d of dirs) for(let L=0;L<7;L++){
+    const acc=keyAcc(key,L)+d;
     if(((LETPC[L]+acc)%12+12)%12===pc) return {step:fit(L,acc), sign: acc===0?"♮":acc>0?"♯":"♭"};
   }
   return {step:0, sign:null};
@@ -1560,49 +1614,63 @@ function midiLabel(key, midi){
 }
 
 /* --- Notensystem zeichnen (SVG) --- */
-const HS=6, Y_BASE=88;                         // halber Linienabstand; y von E4 (unterste Linie)
-const yOf=step=>Y_BASE-(step-2)*HS;
+const HS=6, Y_BASE=88;                         // halber Linienabstand; y der untersten Linie
 const SLOT_W=40;
-function staffSVG(key, notes, o={}){
-  // notes: [{midi, cls}]  o: {slots, sel, caption}
-  const nSig=key.sh||key.fl, x0=40+nSig*10, slots=Math.max(o.slots||notes.length, notes.length);
+function staffSVG(key, clefId, notes, o={}){
+  // notes: [{midi, cls}]  o: {slots, sel, next, caption}
+  const c=CLEFS[clefId], yOf=st=>Y_BASE-(st-c.bottom)*HS;
+  const nSig=key.sh||key.fl, x0=44+nSig*10, slots=Math.max(o.slots||notes.length, notes.length);
   const W=x0+slots*SLOT_W+12, H=118;
-  let g=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(o.caption||"Notensystem")}">`;
-  for(let i=0;i<5;i++){ const y=yOf(2+2*i); g+=`<line class="ln" x1="2" x2="${W-2}" y1="${y}" y2="${y}"/>`; }
-  g+=`<text class="glyph" x="4" y="${yOf(2)+10}" font-size="64">𝄞</text>`;
-  const sigSteps = key.sh ? SHARP_STEPS.slice(0,key.sh) : FLAT_STEPS.slice(0,key.fl);
-  sigSteps.forEach((st,i)=>{ g+=`<text class="glyph" x="${36+i*10}" y="${yOf(st)+(key.sh?5:4)}" font-size="${key.sh?17:19}">${key.sh?"♯":"♭"}</text>`; });
+  let g=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(o.caption||"Notensystem")}, ${c.name}">`;
+  for(let i=0;i<5;i++){ const y=yOf(c.bottom+2*i); g+=`<line class="ln" x1="2" x2="${W-2}" y1="${y}" y2="${y}"/>`; }
+  // Schlüssel: wird nach dem Einfügen per fitClefs() exakt auf die Linien gesetzt
+  const yRef=yOf(c.ref);
+  g+=`<text class="glyph clef" font-size="40" data-left="5" data-top="${yRef-c.up*2*HS}" data-bot="${yRef+c.down*2*HS}">${c.glyph}</text>`;
+  const sigSteps = (key.sh ? SHARP_STEPS.slice(0,key.sh) : FLAT_STEPS.slice(0,key.fl)).map(st=>st+c.sig);
+  sigSteps.forEach((st,i)=>{ g+=`<text class="glyph" x="${40+i*10}" y="${yOf(st)+(key.sh?5:4)}" font-size="${key.sh?17:19}">${key.sh?"♯":"♭"}</text>`; });
   if(o.caption) g+=`<text class="cap" x="${x0}" y="11">${esc(o.caption.toUpperCase())}</text>`;
+  const top=c.bottom+8, mid=c.bottom+4;
   for(let i=0;i<slots;i++){
     const cx=x0+i*SLOT_W+SLOT_W/2;
     g+=`<text class="num" x="${cx}" y="${H-3}" text-anchor="middle">${i+1}</text>`;
     const nt=notes[i];
-    if(!nt){ if(o.next===i) g+=`<rect class="slot" x="${cx-11}" y="${yOf(12)}" width="22" height="${yOf(0)-yOf(12)}" rx="6"/>`; continue; }
+    if(!nt){ if(o.next===i) g+=`<rect class="slot" x="${cx-11}" y="${yOf(top+2)}" width="22" height="${yOf(c.bottom-2)-yOf(top+2)}" rx="6"/>`; continue; }
     const {step,sign}=spellInKey(key, nt.midi), y=yOf(step);
     let n=`<g class="nt ${nt.cls||""}">`;
-    for(let s=0; s>=step; s-=2) n+=`<line class="ledger" x1="${cx-10}" x2="${cx+10}" y1="${yOf(s)}" y2="${yOf(s)}"/>`;
-    for(let s=12; s<=step; s+=2) n+=`<line class="ledger" x1="${cx-10}" x2="${cx+10}" y1="${yOf(s)}" y2="${yOf(s)}"/>`;
+    for(let s=c.bottom-2; s>=step; s-=2) n+=`<line class="ledger" x1="${cx-10}" x2="${cx+10}" y1="${yOf(s)}" y2="${yOf(s)}"/>`;
+    for(let s=top+2; s<=step; s+=2) n+=`<line class="ledger" x1="${cx-10}" x2="${cx+10}" y1="${yOf(s)}" y2="${yOf(s)}"/>`;
     if(sign) n+=`<text class="glyph" x="${cx-19}" y="${y+5}" font-size="16">${sign}</text>`;
     n+=`<ellipse cx="${cx}" cy="${y}" rx="6.6" ry="4.8" transform="rotate(-20 ${cx} ${y})"/>`;
-    const up=step<6;
-    n+= up ? `<line x1="${cx+6}" x2="${cx+6}" y1="${y-1}" y2="${y-33}" stroke-width="1.4"/>`
-           : `<line x1="${cx-6}" x2="${cx-6}" y1="${y+1}" y2="${y+33}" stroke-width="1.4"/>`;
+    n+= step<mid ? `<line x1="${cx+6}" x2="${cx+6}" y1="${y-1}" y2="${y-33}" stroke-width="1.4"/>`
+                 : `<line x1="${cx-6}" x2="${cx-6}" y1="${y+1}" y2="${y+33}" stroke-width="1.4"/>`;
     if(o.sel===i) n+=`<rect x="${cx-16}" y="${y-14}" width="32" height="28" rx="7" fill="none" stroke="var(--accent)" stroke-width="1.5"/>`;
     g+=n+`</g>`;
   }
   return g+`</svg>`;
 }
+// Schlüssel-Zeichen auf seine Linien setzen – unabhängig davon, welche Schrift das Gerät nutzt
+function fitClefs(root){
+  root.querySelectorAll("text.clef").forEach(t=>{
+    t.removeAttribute("transform");
+    let bb; try{ bb=t.getBBox(); }catch(e){ return; }
+    if(!bb || !bb.height) return;
+    const top=+t.dataset.top, bot=+t.dataset.bot, left=+t.dataset.left, sc=(bot-top)/bb.height;
+    t.setAttribute("transform", `translate(${left-bb.x*sc} ${top-bb.y*sc}) scale(${sc})`);
+  });
+}
 
 /* --- Zustand und Einstellungen --- */
 if(!state.md) state.md={};
-const MDD={len:4, keys:["C","G","F"], motion:"third", tempo:"mid", input:"piano", given:true, cadence:true};
+const MDD={len:4, keys:["C","G","F"], motion:"third", tempo:"mid", input:"piano", given:true, cadence:true, clef:"treble"};
 for(const k in MDD) if(state.md[k]===undefined) state.md[k]=Array.isArray(MDD[k])?[...MDD[k]]:MDD[k];
 const mdStat=statBlock("mdStats");
 const md={q:null, ans:[], sel:-1, checked:false};
 const TEMPO={slow:0.95, mid:0.7, fast:0.5};
 function mdSettings(){
   chipGroup($pc("mdLen"), [3,4,5,6,8].map(n=>({v:n,label:n+" Töne"})), v=>state.md.len===v, v=>{ state.md.len=v; });
-  chipGroup($pc("mdKeys"), MD_KEYS.map(k=>({v:k.n,label:k.n+"‑Dur",small:k.sh?k.sh+"♯":k.fl?k.fl+"♭":""})),
+  chipGroup($pc("mdClef"), [{v:"treble",label:"Violinschlüssel"},{v:"bass",label:"Bassschlüssel"}],
+    v=>state.md.clef===v, v=>{ state.md.clef=v; if(!md.q || md.checked){ md.q=null; mdRender(); } });
+  chipGroup($pc("mdKeys"), MD_KEYS.map(k=>({v:k.n,label:keyLabel(k),small:k.sh?k.sh+"♯":k.fl?k.fl+"♭":""})),
     v=>state.md.keys.includes(v), v=>toggleKeep(state.md.keys,v,MD_KEYS.map(k=>k.n)));
   chipGroup($pc("mdMotion"), [{v:"step",label:"nur Schritte"},{v:"third",label:"Schritte + Terzen"},{v:"leap",label:"auch Sprünge",small:"bis Sexte"}],
     v=>state.md.motion===v, v=>{ state.md.motion=v; });
@@ -1615,9 +1683,9 @@ function mdSettings(){
   mdSummary();
 }
 function mdSummary(){
-  $pc("mdSum").textContent=`${state.md.len} Töne · ${state.md.keys.map(k=>k+"‑Dur").join(", ")}`;
+  $pc("mdSum").textContent=`${CLEFS[state.md.clef].name} · ${state.md.len} Töne · ${state.md.keys.map(n=>keyLabel(MD_KEYS.find(k=>k.n===n))).join(", ")}`;
 }
-["mdLen","mdKeys","mdMotion","mdTempo","mdGiven","mdCad"].forEach(id=>$pc(id).addEventListener("click",()=>setTimeout(mdSummary,0)));
+["mdClef","mdLen","mdKeys","mdMotion","mdTempo","mdGiven","mdCad"].forEach(id=>$pc(id).addEventListener("click",()=>setTimeout(mdSummary,0)));
 function mdInputUi(){
   const seg=$pc("mdInput"); seg.innerHTML="";
   [["piano","Klaviatur"],["staff","Notenschrift"]].forEach(([v,l])=>{
@@ -1629,15 +1697,17 @@ function mdInputUi(){
   const staff=state.md.input==="staff";
   $pc("mdPiano").hidden=staff || md.checked; $pc("mdStaffCtl").hidden=!staff || md.checked;
   $pc("mdInputHint").textContent = md.checked ? "" : staff
-    ? "Tippe ins Notensystem, wo die nächste Note stehen soll. Mit ▲ ▼ korrigierst du die markierte Note."
+    ? "Tippe ins Notensystem, wo die nächste Note stehen soll. ▲ ▼ verschiebt die markierte Note, ♯ ♭ ändert sie um einen Halbton."
     : "Tippe die Töne der Reihe nach auf der Klaviatur an.";
 }
 
 /* --- Melodie erzeugen und abspielen --- */
 function mdGenerate(){
   const kn=pick(state.md.keys), key=MD_KEYS.find(k=>k.n===kn), n=state.md.len;
+  const clefId=state.md.clef, c=CLEFS[clefId];
   const maxJ={step:1, third:2, leap:5}[state.md.motion];
-  const tonic=key.l, lo=Math.max(STEP_MIN,tonic-3), hi=Math.min(STEP_MAX,tonic+8);
+  const tonic = clefId==="treble" ? key.l : (key.l>=4 ? key.l-14 : key.l-7);
+  const lo=Math.max(c.smin,tonic-3), hi=Math.min(c.smax,tonic+8);
   const steps=[tonic];
   for(let i=1;i<n;i++){
     let s, tries=0;
@@ -1650,17 +1720,20 @@ function mdGenerate(){
     steps.push(s);
   }
   if(n>2){   // auf dem Grundton enden
-    const last=steps[n-2], c=[tonic,tonic+7,tonic-7].filter(s=>s>=STEP_MIN&&s<=STEP_MAX);
-    steps[n-1]=c.sort((a,b)=>Math.abs(a-last)-Math.abs(b-last))[0];
+    const last=steps[n-2], cand=[tonic,tonic+7,tonic-7].filter(s=>s>=c.smin&&s<=c.smax);
+    steps[n-1]=cand.sort((a,b)=>Math.abs(a-last)-Math.abs(b-last))[0];
     if(steps[n-1]===steps[n-2] && n>3) steps[n-2]+= steps[n-2]<hi ? 1 : -1;
   }
-  return {key, notes:steps.map(s=>stepMidi(key,s))};
+  const deg=s=>((s-tonic)%7+7)%7;
+  // Moll: 7. Stufe vor dem Grundton als Leitton erhöhen (harmonisch Moll)
+  const notes=steps.map((s,i)=> stepMidi(key,s) + (key.min && deg(s)===6 && i+1<n && deg(steps[i+1])===0 ? 1 : 0));
+  return {key, clef:clefId, notes};
 }
 function mdPlayNotes(notes, withCad){
   const c=ac(); let t=c.currentTime+0.05;
   if(withCad){
     const k=md.q.key, root=48+(((LETPC[k.l]+k.a)%12)+12)%12;
-    [0,4,7].forEach(s=>tone(root+12+s,t,1.3,0.5)); tone(root,t,1.3,0.5);
+    (k.min?[0,3,7]:[0,4,7]).forEach(s=>tone(root+12+s,t,1.3,0.5)); tone(root,t,1.3,0.5);
     t+=1.6;
   }
   const d=TEMPO[state.md.tempo];
@@ -1672,7 +1745,7 @@ function mdNew(){
   md.q=mdGenerate(); md.checked=false; md.res=null;
   md.ans = state.md.given ? [md.q.notes[0]] : [];
   md.sel = md.ans.length-1;
-  $pc("mdPill").textContent=md.q.key.n+"‑Dur";
+  $pc("mdPill").textContent=keyLabel(md.q.key);
   $pc("mdTitle").textContent=`Melodie mit ${md.q.notes.length} Tönen`;
   $pc("mdHint").textContent= state.md.given ? `Der erste Ton ist vorgegeben (${midiLabel(md.q.key,md.q.notes[0])}).` : "Finde alle Töne selbst.";
   $pc("mdFeedback").hidden=true; $pc("mdEditRow").hidden=false; $pc("mdDoneRow").hidden=true;
@@ -1686,19 +1759,23 @@ function mdRender(){
   mdInputUi();
   const box=$pc("mdStaff");
   if(!md.q){
-    box.innerHTML=staffSVG(MD_KEYS[0], [], {slots:state.md.len, caption:"Deine Melodie"});
-    $pc("mdPiano").innerHTML=piano(MD_LO, MD_HI, {tag:"button"});
+    const c0=CLEFS[state.md.clef];
+    box.innerHTML=staffSVG(MD_KEYS[0], state.md.clef, [], {slots:state.md.len, caption:"Deine Melodie"});
+    $pc("mdPiano").innerHTML=piano(c0.lo, c0.hi, {tag:"button"});
+    fitClefs(box);
     return;
   }
+  const cq=CLEFS[md.q.clef];
   const staffMode=state.md.input==="staff" && !md.checked;
   box.classList.toggle("edit", staffMode);
   const notes=md.ans.map((m,i)=>({midi:m, cls: md.res ? md.res[i] : mdLocked(i) ? "given" : (staffMode && i===md.sel ? "sel" : "")}));
-  let html=staffSVG(md.q.key, notes, {slots:md.q.notes.length, sel: staffMode?md.sel:undefined,
+  let html=staffSVG(md.q.key, md.q.clef, notes, {slots:md.q.notes.length, sel: staffMode?md.sel:undefined,
     next: md.checked?undefined:md.ans.length, caption:"Deine Melodie"});
-  if(md.checked) html+=staffSVG(md.q.key, md.q.notes.map((m,i)=>({midi:m, cls: md.res[i]==="ok"?"ok":"sol"})), {caption:"Lösung"});
+  if(md.checked) html+=staffSVG(md.q.key, md.q.clef, md.q.notes.map((m,i)=>({midi:m, cls: md.res[i]==="ok"?"ok":"sol"})), {caption:"Lösung"});
   box.innerHTML=html;
+  fitClefs(box);
   const last=md.ans[md.ans.length-1];
-  $pc("mdPiano").innerHTML=piano(MD_LO, MD_HI, {tag:"button", cls:m=> !md.checked && m===last ? "sel" : ""});
+  $pc("mdPiano").innerHTML=piano(cq.lo, cq.hi, {tag:"button", cls:m=> !md.checked && m===last ? "sel" : ""});
 }
 function mdAdd(midi){
   if(!md.q || md.checked || md.ans.length>=md.q.notes.length) return;
@@ -1717,8 +1794,8 @@ $pc("mdStaff").addEventListener("pointerdown",e=>{
   e.preventDefault();
   const pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
   const p=pt.matrixTransform(svg.getScreenCTM().inverse());
-  const key=md.q.key, x0=40+(key.sh||key.fl)*10;
-  let step=Math.round((Y_BASE-p.y)/HS)+2; step=Math.max(STEP_MIN,Math.min(STEP_MAX,step));
+  const key=md.q.key, c=CLEFS[md.q.clef], x0=44+(key.sh||key.fl)*10;
+  let step=Math.round((Y_BASE-p.y)/HS)+c.bottom; step=Math.max(c.smin,Math.min(c.smax,step));
   const slot=Math.floor((p.x-x0)/SLOT_W);
   const midi=stepMidi(key,step);
   if(slot>=0 && slot<md.ans.length){
@@ -1729,12 +1806,20 @@ $pc("mdStaff").addEventListener("pointerdown",e=>{
 });
 function mdMoveSel(dir){
   if(!md.q || md.checked || md.sel<0 || mdLocked(md.sel)) return;
-  const key=md.q.key, {step}=spellInKey(key, md.ans[md.sel]);
-  const ns=Math.max(STEP_MIN,Math.min(STEP_MAX, step+dir));
+  const key=md.q.key, c=CLEFS[md.q.clef], {step}=spellInKey(key, md.ans[md.sel]);
+  const ns=Math.max(c.smin,Math.min(c.smax, step+dir));
   md.ans[md.sel]=stepMidi(key,ns);
   tone(md.ans[md.sel], ac().currentTime+0.02, 0.8, 0.9);
   mdRender();
 }
+function mdSemi(d){
+  if(!md.q || md.checked || md.sel<0 || mdLocked(md.sel)) return;
+  const c=CLEFS[md.q.clef], m=md.ans[md.sel]+d;
+  if(m<c.lo-1 || m>c.hi+1) return;
+  md.ans[md.sel]=m; tone(m, ac().currentTime+0.02, 0.8, 0.9); mdRender();
+}
+$pc("mdSharp").onclick=()=>mdSemi(1);
+$pc("mdFlat").onclick=()=>mdSemi(-1);
 $pc("mdUp").onclick=()=>mdMoveSel(1);
 $pc("mdDown").onclick=()=>mdMoveSel(-1);
 $pc("mdPrev").onclick=()=>{ if(md.sel>0){ md.sel--; mdRender(); } };
@@ -1790,6 +1875,7 @@ function showView(v){
   if(v!=="sing" && pc.on) pcStop();
   if(v==="cnotes" && !cn.q) cnNew();
   if(v==="ckey" && !ck.q) ckNew();
+  if(v==="mdict") mdRender();
 }
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>showView(t.dataset.view));
 document.querySelectorAll(".sectbtn").forEach(b=>b.onclick=()=>{
