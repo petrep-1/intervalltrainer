@@ -280,6 +280,19 @@ td.pc{width:42%}
 .staffctl{display:flex;gap:6px;flex-wrap:wrap}
 .staffctl .sbtn{flex:1 1 auto;min-height:46px;font-size:15px}
 
+/* Akkorddiktat */
+.tabs.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cslots{display:grid;grid-template-columns:repeat(auto-fit,minmax(62px,1fr));gap:8px}
+.cslot{border:1.5px dashed var(--line);border-radius:12px;min-height:70px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:var(--surface-2);color:var(--ink);cursor:pointer;font:800 22px/1.1 var(--display)}
+.cslot small{font:600 11px var(--body);color:var(--muted)}
+.cslot .pos{font:700 10px var(--body);color:var(--muted);letter-spacing:.06em}
+.cslot.cur{border-style:solid;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.cslot.given{border-style:solid;opacity:.75;cursor:default}
+.cslot.ok{border:1.5px solid var(--good);background:var(--good-bg);color:var(--good)}
+.cslot.bad{border:1.5px solid var(--bad);background:var(--bad-bg);color:var(--bad)}
+.cslot .sol{font:700 12px var(--body);color:var(--brass)}
+.cslot:disabled{cursor:default}
+
 /* Merkhilfen */
 .hrow{padding:16px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
 .hrow:first-child{padding-top:0}
@@ -367,6 +380,10 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
       <button class="tab" role="tab" id="tab-ctype" aria-selected="false" data-view="ctype">Akkord hören</button>
       <button class="tab" role="tab" id="tab-cnotes" aria-selected="false" data-view="cnotes">Akkordtöne</button>
       <button class="tab" role="tab" id="tab-ckey" aria-selected="false" data-view="ckey">Tonart</button>
+    </div>
+    <div class="tabs two" role="tablist" id="tabsDk" hidden>
+      <button class="tab" role="tab" id="tab-mdict" aria-selected="false" data-view="mdict">Melodie</button>
+      <button class="tab" role="tab" id="tab-cdict" aria-selected="false" data-view="cdict">Akkordfolge</button>
     </div>
   </nav>
 
@@ -625,6 +642,47 @@ footer kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
       <button class="btn ghost" id="mdMine">Meine Antwort anhören</button>
     </div>
     <div class="statblock" id="mdStats"></div>
+  </section>
+
+  <!-- AKKORDDIKTAT -->
+  <section id="view-cdict" class="card" hidden>
+    <details class="setbox subset">
+      <summary><b>Einstellungen</b><span id="cdSum"></span></summary>
+      <section class="settings">
+        <div><p class="label">Länge</p><div class="chips" id="cdLen"></div></div>
+        <div><p class="label">Tonarten</p><div class="chips" id="cdKeys"></div></div>
+        <div><p class="label">Stufen</p><div class="chips" id="cdDeg"></div></div>
+        <div><p class="label">Tempo</p><div class="chips" id="cdTempo"></div></div>
+        <div><p class="label">Schluss</p><div class="chips" id="cdEnd"></div></div>
+        <div><p class="label">Vor der Folge</p><div class="chips" id="cdCad"></div></div>
+      </section>
+    </details>
+    <div class="playrow">
+      <button class="play" id="cdPlay" aria-label="Akkordfolge abspielen"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      <div class="playinfo">
+        <span class="pill" id="cdPill">Diktat</span>
+        <div class="mode-tag" id="cdTitle">Akkorddiktat</div>
+        <div class="hint" id="cdHint">Tippe auf Play und bestimme jeden Akkord der Folge.</div>
+      </div>
+    </div>
+    <div class="inputsw" role="radiogroup" aria-label="Beschriftung">
+      <span class="label" style="margin:0">Antworten als</span>
+      <div class="seg" id="cdLabelMode"></div>
+    </div>
+    <div class="cslots" id="cdSlots"></div>
+    <div class="answers" id="cdAnswers"></div>
+    <div id="cdFeedback" hidden></div>
+    <div class="btnrow" id="cdEditRow">
+      <button class="btn" id="cdCheck">Prüfen</button>
+      <button class="btn ghost" id="cdUndo">Rückgängig</button>
+      <button class="btn ghost" id="cdClear">Alles löschen</button>
+    </div>
+    <div class="btnrow" id="cdDoneRow" hidden>
+      <button class="btn" id="cdNew">Nächste Folge</button>
+      <button class="btn ghost" id="cdAgain">Folge nochmal</button>
+      <button class="btn ghost" id="cdMine">Meine Antwort anhören</button>
+    </div>
+    <div class="statblock" id="cdStats"></div>
   </section>
 
   <footer>Tastatur im Quiz: <kbd>Leertaste</kbd> abspielen · <kbd>1</kbd>–<kbd>0</kbd> antworten · <kbd>Enter</kbd> weiter</footer>
@@ -1861,13 +1919,204 @@ $pc("mdAgain").onclick=()=>{ if(md.q) mdPlayNotes(md.q.notes, false); };
 $pc("mdMine").onclick=()=>{ if(md.q) mdPlayNotes(md.ans, false); };
 mdSettings(); mdRender();
 
+/* =====================================================================
+   AKKORDDIKTAT
+   Eine Akkordfolge in Dur oder Moll; für jeden Akkord die Stufe bestimmen.
+   Moll mit Dur-Dominante (harmonisch Moll). Stimmführung: Oberstimmen
+   bleiben möglichst nah am vorigen Akkord, Bass spielt den Grundton.
+   ===================================================================== */
+const CD_DEG_MAJ=[{r:"I",s:0,q:"maj"},{r:"ii",s:2,q:"min"},{r:"iii",s:4,q:"min"},{r:"IV",s:5,q:"maj"},
+  {r:"V",s:7,q:"maj"},{r:"vi",s:9,q:"min"},{r:"vii°",s:11,q:"dim"},{r:"V7",s:7,q:"dom7",d:4}];
+const CD_DEG_MIN=[{r:"i",s:0,q:"min"},{r:"ii°",s:2,q:"dim"},{r:"III",s:3,q:"maj"},{r:"iv",s:5,q:"min"},
+  {r:"V",s:7,q:"maj"},{r:"VI",s:8,q:"maj"},{r:"VII",s:10,q:"maj"},{r:"V7",s:7,q:"dom7",d:4}];
+const CD_QF={maj:[0,4,7],min:[0,3,7],dim:[0,3,6],dom7:[0,4,7,10]}, CD_SUF={maj:"",min:"m",dim:"dim",dom7:"7"};
+const cdDegs=k=>k.min?CD_DEG_MIN:CD_DEG_MAJ;
+function cdChordName(k, i){
+  const d=cdDegs(k)[i], deg=(d.d??i)+1;
+  return spellInt(k.l,k.a,d.s,deg)+CD_SUF[d.q];
+}
+function cdVoice(k, i, prevCenter){
+  const d=cdDegs(k)[i], f=CD_QF[d.q], rootPc=(((LETPC[k.l]+k.a+d.s)%12)+12)%12;
+  let best=null;
+  for(let inv=0; inv<f.length; inv++){
+    const rel=[...f.slice(inv), ...f.slice(0,inv).map(s=>s+12)].map(s=>s-f[inv]);
+    for(let low=50; low<=72; low++){
+      if(((low-rootPc-f[inv])%12+12)%12) continue;
+      const notes=rel.map(s=>low+s);
+      if(notes[0]<53 || notes[notes.length-1]>77) continue;
+      const center=notes.reduce((a,b)=>a+b,0)/notes.length;
+      const cost=Math.abs(center-(prevCenter ?? 65));
+      if(!best || cost<best.cost) best={notes,center,cost};
+    }
+  }
+  const bass=40+((rootPc-40)%12+12)%12;
+  return {notes:[bass,...best.notes], center:best.center};
+}
+function cdVoiceAll(k, seq){
+  let c=null; return seq.map(i=>{ const v=cdVoice(k,i,c); c=v.center; return v.notes; });
+}
+
+/* --- Einstellungen --- */
+if(!state.cd) state.cd={};
+const CDD={len:4, keys:["C","G","F"], deg:[0,3,4,5], tempo:"mid", end:"tonic", cadence:false, labels:"roman"};
+for(const k in CDD) if(state.cd[k]===undefined) state.cd[k]=Array.isArray(CDD[k])?[...CDD[k]]:CDD[k];
+const cdStat=statBlock("cdStats");
+const cd={q:null, ans:[], cur:0, checked:false, res:null};
+const CD_TEMPO={slow:1.7, mid:1.25, fast:0.9};
+function cdSettings(){
+  chipGroup($pc("cdLen"), [3,4,5,6].map(n=>({v:n,label:n+" Akkorde"})), v=>state.cd.len===v, v=>{ state.cd.len=v; });
+  chipGroup($pc("cdKeys"), MD_KEYS.map(k=>({v:k.n,label:keyLabel(k)})),
+    v=>state.cd.keys.includes(v), v=>toggleKeep(state.cd.keys,v,MD_KEYS.map(k=>k.n)));
+  chipGroup($pc("cdDeg"), CD_DEG_MAJ.map((d,i)=>({v:i,label: d.r===CD_DEG_MIN[i].r ? d.r : d.r+" / "+CD_DEG_MIN[i].r})),
+    v=>state.cd.deg.includes(v), v=>{ toggleKeep(state.cd.deg,v,[0,1,2,3,4,5,6,7]); cdRenderAnswers(); });
+  chipGroup($pc("cdTempo"), [{v:"slow",label:"langsam"},{v:"mid",label:"mittel"},{v:"fast",label:"schnell"}],
+    v=>state.cd.tempo===v, v=>{ state.cd.tempo=v; });
+  chipGroup($pc("cdEnd"), [{v:"tonic",label:"endet auf I"},{v:"free",label:"frei"}],
+    v=>state.cd.end===v, v=>{ state.cd.end=v; });
+  chipGroup($pc("cdCad"), [{v:false,label:"nichts"},{v:true,label:"Kadenz I–IV–V–I"}],
+    v=>state.cd.cadence===v, v=>{ state.cd.cadence=v; });
+  cdSummary();
+}
+function cdSummary(){
+  $pc("cdSum").textContent=`${state.cd.len} Akkorde · Stufen ${state.cd.deg.map(i=>CD_DEG_MAJ[i].r).join(" ")}`;
+}
+["cdLen","cdKeys","cdDeg","cdTempo","cdEnd","cdCad"].forEach(id=>$pc(id).addEventListener("click",()=>setTimeout(cdSummary,0)));
+function cdLabelUi(){
+  const seg=$pc("cdLabelMode"); seg.innerHTML="";
+  [["roman","Stufen"],["names","Akkordnamen"]].forEach(([v,l])=>{
+    const b=document.createElement("button"); b.type="button"; b.setAttribute("role","radio");
+    b.setAttribute("aria-checked", state.cd.labels===v); b.textContent=l;
+    b.onclick=()=>{ state.cd.labels=v; save(); cdLabelUi(); cdRenderSlots(); cdRenderAnswers(); };
+    seg.appendChild(b);
+  });
+}
+const cdKeyOrDefault=()=> cd.q ? cd.q.key : MD_KEYS[0];
+function cdMain(i){ const k=cdKeyOrDefault(); return state.cd.labels==="roman" ? cdDegs(k)[i].r : cdChordName(k,i); }
+function cdSub(i){ const k=cdKeyOrDefault(); return state.cd.labels==="roman" ? cdChordName(k,i) : cdDegs(k)[i].r; }
+
+/* --- Folge erzeugen und abspielen --- */
+function cdGenerate(){
+  const kn=pick(state.cd.keys), key=MD_KEYS.find(k=>k.n===kn), n=state.cd.len;
+  const pool=state.cd.deg.filter(i=>i!==0).length ? state.cd.deg.filter(i=>i!==0) : [3,4];
+  const seq=[0];
+  for(let i=1;i<n;i++){
+    const last=i===n-1;
+    if(last && state.cd.end==="tonic"){ seq.push(0); break; }
+    const pre = i===n-2 && state.cd.end==="tonic";
+    const dom = pool.filter(x=>x===4||x===7);
+    let c;
+    if(pre && dom.length && Math.random()<0.7) c=pick(dom);   // meist Dominante vor dem Schluss
+    else { let t=0; do{ c=pick(pool); t++; } while(c===seq[i-1] && t<20); }
+    seq.push(c);
+  }
+  return {key, seq};
+}
+function cdPlaySeq(seq, withCad){
+  const c=ac(), k=cd.q.key, d=CD_TEMPO[state.cd.tempo];
+  let t=c.currentTime+0.05;
+  const play=(voices)=>voices.forEach(notes=>{
+    const vol=Math.min(1,1.6/notes.length);
+    notes.forEach(m=>tone(m,t,d*1.15,vol)); t+=d;
+  });
+  if(withCad){ play(cdVoiceAll(k,[0,3,4,0])); t+=d*0.6; }
+  play(cdVoiceAll(k,seq));
+  pulse((t-c.currentTime)*1000);
+}
+function cdNew(){
+  cd.q=cdGenerate(); cd.checked=false; cd.res=null;
+  cd.ans=[0]; cd.cur=1;
+  $pc("cdPill").textContent=keyLabel(cd.q.key);
+  $pc("cdTitle").textContent=`Akkordfolge mit ${cd.q.seq.length} Akkorden`;
+  $pc("cdHint").textContent=`Der erste Akkord ist die Tonika (${cdChordName(cd.q.key,0)}).`;
+  $pc("cdFeedback").hidden=true; $pc("cdEditRow").hidden=false; $pc("cdDoneRow").hidden=true;
+  cdRenderSlots(); cdRenderAnswers();
+  cdPlaySeq(cd.q.seq, state.cd.cadence);
+}
+
+/* --- Eingabe --- */
+function cdRenderSlots(){
+  const box=$pc("cdSlots"); box.innerHTML="";
+  const n=cd.q ? cd.q.seq.length : state.cd.len;
+  for(let i=0;i<n;i++){
+    const b=document.createElement("button"); b.type="button"; b.className="cslot";
+    const a=cd.ans[i];
+    if(i===0 && cd.q) b.classList.add("given");
+    if(!cd.checked && i===cd.cur) b.classList.add("cur");
+    if(cd.res) b.classList.add(cd.res[i]);
+    b.innerHTML = `<span class="pos">${i+1}</span>` + (a===undefined ? `<span>?</span>` : `<span>${esc(cdMain(a))}</span><small>${esc(cdSub(a))}</small>`)
+      + (cd.res && cd.res[i]==="bad" ? `<span class="sol">${esc(cdMain(cd.q.seq[i]))}</span>` : "");
+    b.setAttribute("aria-label", `Akkord ${i+1}: ${a===undefined?"leer":cdMain(a)}`);
+    if(cd.checked || !cd.q || i===0) b.disabled = cd.checked || !cd.q;
+    else b.onclick=()=>{ cd.cur=i; cdRenderSlots(); };
+    if(cd.q && i===0) b.onclick=null;
+    box.appendChild(b);
+  }
+}
+function cdRenderAnswers(){
+  const box=$pc("cdAnswers"); box.innerHTML="";
+  const k=cdKeyOrDefault();
+  [...state.cd.deg].sort((a,b)=>a-b).forEach(i=>{
+    const b=document.createElement("button"); b.className="ans"; b.type="button";
+    b.innerHTML=`<span>${esc(cdMain(i))}<small>${esc(cdSub(i))}</small></span>`;
+    b.disabled = !cd.q || cd.checked;
+    b.onclick=()=>cdPick(i);
+    box.appendChild(b);
+  });
+}
+function cdPick(i){
+  if(!cd.q || cd.checked) return;
+  const n=cd.q.seq.length;
+  if(cd.cur<1 || cd.cur>=n) cd.cur=Math.min(n-1, cd.ans.length);
+  cd.ans[cd.cur]=i;
+  // Akkord zum Vergleich anspielen
+  const v=cdVoice(cd.q.key,i,null).notes, c=ac();
+  v.forEach(m=>tone(m,c.currentTime+0.02,0.9,Math.min(1,1.6/v.length)));
+  // zur nächsten leeren Stelle springen
+  let next=-1; for(let j=1;j<n;j++) if(cd.ans[j]===undefined){ next=j; break; }
+  cd.cur = next>0 ? next : cd.cur;
+  cdRenderSlots();
+}
+$pc("cdUndo").onclick=()=>{
+  if(!cd.q || cd.checked) return;
+  for(let j=cd.q.seq.length-1;j>=1;j--) if(cd.ans[j]!==undefined){ cd.ans[j]=undefined; cd.cur=j; break; }
+  cdRenderSlots();
+};
+$pc("cdClear").onclick=()=>{ if(!cd.q || cd.checked) return; cd.ans=[0]; cd.cur=1; $pc("cdFeedback").hidden=true; cdRenderSlots(); };
+
+/* --- Prüfen --- */
+function cdCheck(){
+  if(!cd.q || cd.checked) return;
+  const n=cd.q.seq.length, missing=[...Array(n).keys()].filter(i=>cd.ans[i]===undefined).length;
+  if(missing){
+    feedbackBox($pc("cdFeedback"), false, `Noch ${missing} ${missing===1?"Akkord fehlt":"Akkorde fehlen"}`, "<span>Bestimme erst alle Akkorde, dann prüfen.</span>");
+    return;
+  }
+  cd.checked=true;
+  // V und V7 klingen ähnlich, zählen aber getrennt
+  cd.res=cd.q.seq.map((x,i)=> cd.ans[i]===x ? "ok" : "bad");
+  const counted=cd.res.slice(1), right=counted.filter(r=>r==="ok").length, ok=right===counted.length;
+  cdStat.add(ok);
+  const k=cd.q.key;
+  const roman=cd.q.seq.map(i=>cdDegs(k)[i].r).join(" – "), names=cd.q.seq.map(i=>cdChordName(k,i)).join(" – ");
+  feedbackBox($pc("cdFeedback"), ok, ok ? "Richtig, alle Akkorde erkannt!" : `${right} von ${counted.length} Akkorden richtig`,
+    `<span>Lösung: ${esc(roman)}</span><span class="hint">${esc(keyLabel(k))}: ${esc(names)}</span>`);
+  $pc("cdEditRow").hidden=true; $pc("cdDoneRow").hidden=false;
+  cdRenderSlots(); cdRenderAnswers();
+}
+$pc("cdCheck").onclick=cdCheck;
+$pc("cdNew").onclick=cdNew;
+$pc("cdPlay").onclick=()=>{ if(!cd.q || cd.checked) cdNew(); else cdPlaySeq(cd.q.seq, state.cd.cadence); };
+$pc("cdAgain").onclick=()=>{ if(cd.q) cdPlaySeq(cd.q.seq, false); };
+$pc("cdMine").onclick=()=>{ if(cd.q) cdPlaySeq(cd.ans.map(x=>x??0), false); };
+cdSettings(); cdLabelUi(); cdRenderSlots(); cdRenderAnswers();
+
 /* ---------- Tabs & keys ---------- */
 let view="quiz";
-const VIEWS=["quiz","explore","sing","hints","ctype","cnotes","ckey","mdict"], CHORD_VIEWS=["ctype","cnotes","ckey"];
+const VIEWS=["quiz","explore","sing","hints","ctype","cnotes","ckey","mdict","cdict"], CHORD_VIEWS=["ctype","cnotes","ckey"];
 const lastIn={iv:"quiz", ch:"ctype", dk:"mdict"};
 function showView(v){
   view=v;
-  lastIn[CHORD_VIEWS.includes(v)?"ch": v==="mdict"?"dk":"iv"]=v;
+  lastIn[CHORD_VIEWS.includes(v)?"ch": (v==="mdict"||v==="cdict")?"dk":"iv"]=v;
   document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected", x.dataset.view===v));
   VIEWS.forEach(x=>document.getElementById("view-"+x).hidden = x!==v);
   document.getElementById("settings").hidden = !(v==="quiz" || v==="sing");
@@ -1883,6 +2132,7 @@ document.querySelectorAll(".sectbtn").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".sectbtn").forEach(x=>x.setAttribute("aria-selected", x===b));
   document.getElementById("tabsIv").hidden = s!=="iv";
   document.getElementById("tabsCh").hidden = s!=="ch";
+  document.getElementById("tabsDk").hidden = s!=="dk";
   showView(lastIn[s]);
 });
 document.addEventListener("keydown",e=>{
